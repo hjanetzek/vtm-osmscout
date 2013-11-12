@@ -1,0 +1,232 @@
+<project name="osmscout-Linux-64" basedir="." default="postcompile">
+	<!-- include the environment -->
+	<property environment="env"/>	
+	<!-- output directory for temporary object files -->
+	<property name="buildDir" value="target/linux64" />
+	<!-- output directory for the shared library -->
+	<property name="libsDir" value="../libs/linux64" />
+	<!-- the name of the shared library -->
+	<property name="libName" value="libosmscout64.so"/>
+	<!-- the jni header jniPlatform to use -->
+	<property name="jniPlatform" value="linux"/>
+	<!-- the compilerPrefix for the C & C++ compilers -->
+	<property name="compilerPrefix" value=""/>	
+	
+	<!-- define gcc compiler, options and files to compile -->
+	<property name="gcc" value="${compilerPrefix}gcc"/>	
+	<property name="gcc-opts" value="-c -Wall -O2 -mfpmath=sse -msse -fmessage-length=0 -m64 -fPIC -ffast-math -std=gnu++0x"/>
+	<fileset id="gcc-files" dir="./">
+		<exclude name="target/"/>		
+				<include name="memcpy_wrap.c"/>
+		<include name="libosmscout/libosmscout/src/osmscout/AreaAreaIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/AreaNodeIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/AreaWayIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/CityStreetIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Database.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/GroundTile.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Location.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Node.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/OptimizeAreasLowZoom.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/OptimizeWaysLowZoom.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/TypeConfig.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/TypeConfigLoader.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Types.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/WaterIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Way.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Area.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/ost/Parser.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/ost/Scanner.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Color.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/File.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/FileScanner.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/FileWriter.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Geometry.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Magnification.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Projection.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/StopClock.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/String.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Transformation.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/MapPainter.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/StyleConfig.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/StyleConfigLoader.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Parser.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Scanner.cpp"/>
+		<include name="libosmscout-jni/jniDatabase.cpp"/>
+		<include name="libosmscout-jni/jniMapData.cpp"/>
+		<include name="libosmscout-jni/jniMapPainterCanvas.cpp"/>
+		<include name="libosmscout-jni/jniMapParameter.cpp"/>
+		<include name="libosmscout-jni/jniMercatorProjection.cpp"/>
+		<include name="libosmscout-jni/jniObjectTypeSets.cpp"/>
+		<include name="libosmscout-jni/jniOnLoad.cpp"/>
+		<include name="libosmscout-jni/jniStyleConfig.cpp"/>
+		<include name="libosmscout-jni/jniTypeConfig.cpp"/>
+
+		
+	</fileset>
+	
+	<!-- define g++ compiler, options and files to compile -->
+	<property name="g++" value="${compilerPrefix}g++"/>
+	<property name="g++-opts" value="-c -Wall -O2 -mfpmath=sse -msse -fmessage-length=0 -m64 -fPIC -ffast-math -std=gnu++0x"/>
+	<fileset id="g++-files" dir="./">
+		<exclude name="target/"/>
+				<include name="libosmscout/libosmscout/src/osmscout/AreaAreaIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/AreaNodeIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/AreaWayIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/CityStreetIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Database.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/GroundTile.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Location.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Node.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/OptimizeAreasLowZoom.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/OptimizeWaysLowZoom.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/TypeConfig.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/TypeConfigLoader.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Types.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/WaterIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Way.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/Area.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/ost/Parser.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/ost/Scanner.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Color.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/File.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/FileScanner.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/FileWriter.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Geometry.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Magnification.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Projection.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/StopClock.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/String.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/util/Transformation.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/MapPainter.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/StyleConfig.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/StyleConfigLoader.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Parser.cpp"/>
+		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Scanner.cpp"/>
+		<include name="libosmscout-jni/jniDatabase.cpp"/>
+		<include name="libosmscout-jni/jniMapData.cpp"/>
+		<include name="libosmscout-jni/jniMapPainterCanvas.cpp"/>
+		<include name="libosmscout-jni/jniMapParameter.cpp"/>
+		<include name="libosmscout-jni/jniMercatorProjection.cpp"/>
+		<include name="libosmscout-jni/jniObjectTypeSets.cpp"/>
+		<include name="libosmscout-jni/jniOnLoad.cpp"/>
+		<include name="libosmscout-jni/jniStyleConfig.cpp"/>
+		<include name="libosmscout-jni/jniTypeConfig.cpp"/>
+
+				<exclude name="libosmscout/Demos/**"/>
+		<exclude name="libosmscout/TravelJinni/**"/>
+		<exclude name="libosmscout/libosmscout-import/**"/>
+
+	</fileset>
+
+	<!-- define linker and options -->
+	<property name="linker" value="${compilerPrefix}g++"/>
+	<property name="linker-opts" value="-shared -m64 -Wl,-wrap,memcpy"/>
+	<property name="libraries" value=""/>
+	
+	<!-- cleans the build directory, removes all object files and shared libs -->
+	<target name="clean">
+		<delete includeemptydirs="true" quiet="true">
+			<fileset dir="${buildDir}"/>
+			<fileset dir="${libsDir}" includes="**/*" excludes="**/.svn"/>
+		</delete>
+	</target>
+	
+	<target name="precompile">
+		<condition property="compiler-found">
+			<and>
+				<or>
+					<!-- Include both b/c Windows might be either -->
+					<available file="${g++}" filepath="${env.PATH}"/>
+					<available file="${g++}" filepath="${env.Path}"/>
+				</or>
+				<or>
+					<!-- Include both b/c Windows might be either -->
+					<available file="${gcc}" filepath="${env.PATH}"/>
+					<available file="${gcc}" filepath="${env.Path}"/>
+				</or>
+			</and>
+		</condition>
+		<condition property="has-compiler">
+			<equals arg1="${compiler-found}" arg2="true"/>
+		</condition>
+		
+	</target>
+	
+	<target name="create-build-dir" depends="precompile" if="has-compiler">
+		<!-- FIXME this is pretty nasty :/ -->
+		<copy todir="${buildDir}">
+			<fileset refid="g++-files"/>
+			<fileset refid="gcc-files"/>
+		</copy>
+		<delete>
+			<fileset dir="${buildDir}">
+				<include name="*"/>
+				<exclude name="*.o"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<!-- compiles all C and C++ files to object files in the build directory -->
+	<target name="compile" depends="create-build-dir" if="has-compiler">
+		<mkdir dir="${buildDir}"/>
+		<apply failonerror="true" executable="${g++}" dest="${buildDir}" verbose="true">
+			<arg line="${g++-opts}"/>
+			<arg value="-Ijni-headers"/>
+			<arg value="-Ijni-headers/${jniPlatform}"/>
+			<arg value="-I."/>
+						<arg value="-I."/>
+			<arg value="-Iinclude"/>
+			<arg value="-Ilibosmscout/libosmscout/include"/>
+			<arg value="-Ilibosmscout/libosmscout-map/include"/>
+
+			<srcfile/>
+			<arg value="-o"/>
+			<targetfile/>
+			<fileset refid="g++-files"/>
+			<compositemapper>
+				<mapper type="glob" from="*.cpp" to="*.o"/>
+				<mapper type="glob" from="*.mm" to="*.o"/>
+			</compositemapper>
+		</apply>
+		<apply failonerror="true" executable="${gcc}" dest="${buildDir}" verbose="true">
+			<arg line="${gcc-opts}"/>
+			<arg value="-Ijni-headers"/>
+			<arg value="-Ijni-headers/${jniPlatform}"/>
+			<arg value="-I."/>
+						<arg value="-I."/>
+			<arg value="-Iinclude"/>
+			<arg value="-Ilibosmscout/libosmscout/include"/>
+			<arg value="-Ilibosmscout/libosmscout-map/include"/>
+
+			<srcfile/>
+			<arg value="-o"/>
+			<targetfile/>
+			<fileset refid="gcc-files"/>
+			<compositemapper>
+				<mapper type="glob" from="*.c" to="*.o"/>
+			</compositemapper>
+		</apply>
+	</target>	
+
+	<!-- links the shared library based on the previously compiled object files -->	
+	<target name="link" depends="compile" if="has-compiler">
+		<fileset dir="${buildDir}" id="objFileSet">
+			<patternset>
+				<include name="**/*.o" />
+			</patternset>
+		</fileset>
+		<pathconvert pathsep=" " property="objFiles" refid="objFileSet" />
+		<mkdir dir="${libsDir}" />
+		<exec executable="${linker}" failonerror="true" dir="${buildDir}">
+			<arg line="${linker-opts}" />
+			<arg value="-o" />
+			<arg path="${libsDir}/${libName}" />
+			<arg line="${objFiles}"/>
+			<arg line="${libraries}" />
+		</exec>
+	</target>	
+	
+	<target name="postcompile" depends="link">
+		
+	</target>
+</project>

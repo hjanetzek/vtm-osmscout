@@ -61,6 +61,12 @@
 /* system header <unordered_map> is available */
 #define OSMSCOUT_HAVE_UNORDERED_MAP 1
 
+/* system header <unordered_set> is available */
+#define OSMSCOUT_HAVE_UNORDERED_SET 1
+
+/* libosmscout needs to include <math.h> */
+/* #undef OSMSCOUT_REQUIRES_MATHH */
+
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "tim@teulings.org"
 

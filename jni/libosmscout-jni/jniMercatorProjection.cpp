@@ -27,8 +27,95 @@
 #include <osmscout/util/Projection.h>
 
 #include <jniObjectArray.h>
+//#include <osmscout/system/Math.h>
+//#include <osmscout/system/Assert.h>
 
 using namespace osmscout;
+
+//namespace osmscout {
+//   static const double gradtorad = 2 * M_PI / 360;
+//
+//   class TileProjection : MercatorProjection {
+//   public:
+//      bool
+//      Set(long x, long y, int zoom, int size);
+//
+//      bool
+//      GeoToPixel(double lon, double lat, double& x, double& y) const;
+//
+//   };
+//
+//   bool
+//   TileProjection::Set(long x, long y, int zoom, int size)
+//	 {
+//      if (valid &&
+//	    this->lonMin == lonMin &&
+//	    this->lonMax == lonMax &&
+//	    this->latMin == latMin &&
+//	    this->latMax == latMax &&
+//	    this->magnification == magnification &&
+//	    this->width == width) {
+//	 return true;
+//      }
+//
+//      valid = true;
+//
+//      this->lonMin = lonMin;
+//      this->lonMax = lonMax;
+//      this->latMin = latMin;
+//      this->latMax = latMax;
+//      this->magnification = magnification;
+//      this->width = width;
+//
+//      // Make a copy of the context information
+//      this->lon = (lonMin + lonMax) / 2;
+//      this->lat = atan(sinh((atanh(sin(latMax * gradtorad)) + atanh(sin(latMin * gradtorad))) / 2))
+//	    / gradtorad;
+//
+//      scale = (width - 1) / (gradtorad * (lonMax - lonMin));
+//      scaleGradtorad = scale * gradtorad;
+//
+//      // Width of an pixel in meter
+//      double d = (lonMax - lonMin) * gradtorad;
+//
+//      pixelSize = d * 180 * 60 / M_PI * 1852.216 / width;
+//
+//      this->height = (atanh(sin(latMax * gradtorad)) - atanh(sin(latMin * gradtorad))) * scale;
+//
+////      lonOffset = lonMin * scale * gradtorad;
+////      latOffset = scale * atanh(sin(latMin * gradtorad));
+//
+//      long z = size << zoom;
+//      long dx = x - (z >> 1);
+//      long dy = y - (z >> 1);
+//
+//      divx = 180000000.0 / (z >> 1);
+//      divy = z / PIx4;
+//
+//      return true;
+//   }
+//   bool
+//   TileProjection::GeoToPixel(double lon, double lat,
+//	 double& x, double& y) const
+//	 {
+//      assert(valid);
+//
+//      x = lon * scaleGradtorad - lonOffset;
+//      //y = height - (scale * atanh(sin(lat * gradtorad)) - latOffset);
+//
+//
+//      double sinLatitude = sin(lat * (M_PI / 180));
+//      y = 0.5 - log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * M_PI);
+//
+//      x = (lon / divx - lonOffset);
+//
+//      double sinLat = sin(lat * gradtorad);
+//      y = (this->width - (log((1.0 + sinLat) / (1.0 - sinLat)) * divy + latOffset));
+//
+//      return true;
+//   }
+//
+//}
 
 extern JniObjectArray<MercatorProjection> *gProjectionArray;
 
@@ -65,6 +152,20 @@ extern "C" {
       }
 
       return nativeProjection->Set(lon, lat, magnification, width, height);
+   }
+
+   jboolean
+   Java_osm_scout_MercatorProjection_jniSetBounds(JNIEnv *env, jobject object, int projectionIndex,
+	 jdouble minLon, jdouble minLat, jdouble maxLon, jdouble maxLat, jdouble magnification,
+	 jint width) {
+      MercatorProjection *nativeProjection = gProjectionArray->Get(projectionIndex);
+
+      if (!nativeProjection) {
+	 printf("jniSet(): NULL Projection object");
+	 return JNI_FALSE;
+      }
+
+      return nativeProjection->Set(minLon, minLat, maxLon, maxLat, magnification, width);
    }
 
    jobject

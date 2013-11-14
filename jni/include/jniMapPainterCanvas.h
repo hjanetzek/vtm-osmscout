@@ -2,155 +2,171 @@
 #define __MAP_PAINTER_CANVAS_H__
 
 /*
-  This source is part of the libosmscout library
-  Copyright (C) 2010  Tim Teulings
+ This source is part of the libosmscout library
+ Copyright (C) 2010  Tim Teulings
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
-*/
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+ */
 
 #include <osmscout/MapPainter.h>
 
 namespace osmscout {
 
-  class MapPainterCanvas : public osmscout::MapPainter
-  {
+   class MapPainterCanvas : public osmscout::MapPainter {
 
-  private:
+   private:
 
-    JNIEnv   *mJniEnv;
-    jclass   mPainterClass;
-    jobject  mPainterObject;
+      JNIEnv *mJniEnv;
+      jclass mPainterClass;
+      jobject mPainterObject;
 
-    double   mMinimumLineWidth; //! Minimum width a line must have to be visible
+      jobject mMapElement;
+      jclass mMapElementClass;
 
-    std::vector<bool>    mIconLoaded;    // Vector for icon load status
-    std::vector<bool>    mPatternLoaded; // Vector for pattern load status
-    
-    int GetColorInt(double r, double g, double b, double a);
-    int GetColorInt(Color color);
-    CoordBufferImpl<Vertex2D> *coordBuffer;
-  private:
+      jclass mTagClass;
 
-    void DrawPrimitivePath(const Projection& projection,
-                           const MapParameter& parameter,
-                           const DrawPrimitiveRef& primitive,
-                           double x, double y,
-                           double minX,
-                           double minY,
-                           double maxX,
-                           double maxY);
+      jmethodID mGetPoints;
+      jmethodID mGetIndices;
 
-    void DrawPrimitivePath(const Projection& projection,
-                           const MapParameter& parameter,
-                           const DrawPrimitiveRef& primitive,
-                           double x, double y,
-                           double minX,
-                           double minY,
-                           double maxX,
-                           double maxY,
-                           double* onPathX, double* onPathY,
-                           double* segmentLengths);
+      jmethodID mProcessArea;
+      jmethodID mProcessPath;
 
-    void DrawFillStyle(const Projection& projection,
-                       const MapParameter& parameter,
-                       const FillStyle& fill);
+      jmethodID mNewTag;
 
-    void SetPolygonFillPath(float* x, float* y, int numPoints);
+      jmethodID mAddTag;
+      jmethodID mAddTag2;
 
-    void MapPathOnPath(float* arrayX, float* arrayY,
-                       int numPoints,
-                       double* onPathX, double* onPathY,
-                       double* segmentLengths);
+      double mMinimumLineWidth; //! Minimum width a line must have to be visible
 
-  protected:
+      std::vector<bool> mIconLoaded; // Vector for icon load status
+      std::vector<bool> mPatternLoaded; // Vector for pattern load status
 
-    bool HasIcon(const StyleConfig& styleConfig,
-                 const MapParameter& parameter,
-                 IconStyle& style);
+      std::vector<jstring> mTagKeys;
+      std::vector<jobject> mTags;
 
-    bool HasPattern(const MapParameter& parameter,
-                    const FillStyle& style);
+      int
+      GetColorInt(double r, double g, double b, double a);
+      int
+      GetColorInt(Color color);
+      CoordBufferImpl<Vertex2D> *coordBuffer;
+   private:
 
-    void GetTextDimension(const MapParameter& parameter,
-                          double fontSize,
-                          const std::string& text,
-                          double& xOff,
-                          double& yOff,
-                          double& width,
-                          double& height);
+      void
+      initKeys(const StyleConfig& styleConfig);
 
-    void DrawLabel(const Projection& projection,
-                   const MapParameter& parameter,
-                   const LabelData& label);
+      void
+      DrawPrimitivePath(const Projection& projection, const MapParameter& parameter,
+	    const DrawPrimitiveRef& primitive, double x, double y, double minX, double minY,
+	    double maxX, double maxY);
 
-    void DrawContourLabel(const Projection& projection,
-                          const MapParameter& parameter,
-                          const PathTextStyle& style,
-                          const std::string& text,
-                          size_t transStart, size_t transEnd);
+      void
+      DrawPrimitivePath(const Projection& projection, const MapParameter& parameter,
+	    const DrawPrimitiveRef& primitive, double x, double y, double minX, double minY,
+	    double maxX, double maxY, double* onPathX, double* onPathY, double* segmentLengths);
 
-    void DrawSymbol(const Projection& projection,
-                    const MapParameter& parameter,
-                    const Symbol& symbol,
-                    double x, double y);
+      void
+      DrawFillStyle(const Projection& projection, const MapParameter& parameter,
+	    const FillStyle& fill);
 
-    void DrawContourSymbol(const Projection& projection,
-                           const MapParameter& parameter,
-                           const Symbol& symbol,
-                           double space,
-                           size_t transStart, size_t transEnd);
+      void
+      SetPolygonFillPath(float* x, float* y, int numPoints);
 
-    void DrawIcon(const IconStyle* style,
-                  double x, double y);
+      void
+      MapPathOnPath(float* arrayX, float* arrayY, int numPoints, double* onPathX, double* onPathY,
+	    double* segmentLengths);
 
-    void DrawPath(const Projection& projection,
-                  const MapParameter& parameter,
-                  const Color& color,
-                  double width,
-                  const std::vector<double>& dash,
-                  LineStyle::CapStyle startCap,
-                  LineStyle::CapStyle endCap,
-                  size_t transStart, size_t transEnd);
+   protected:
 
-    void DrawArea(const Projection& projection,
-                  const MapParameter& parameter,
-                  const AreaData& area);
+      bool
+      HasIcon(const StyleConfig& styleConfig, const MapParameter& parameter, IconStyle& style);
 
-    void DrawArea(const FillStyle& style,
-                  const MapParameter& parameter,
-                  double x,
-                  double y,
-                  double width,
-                  double height);
+      bool
+      HasPattern(const MapParameter& parameter, const FillStyle& style);
 
-    void DrawGround(const Projection& projection,
-		  const MapParameter& parameter,
-		  const FillStyle& style);
+      void
+      GetTextDimension(const MapParameter& parameter, double fontSize, const std::string& text,
+	    double& xOff, double& yOff, double& width, double& height);
 
-  public:
-    MapPainterCanvas();
-    virtual ~MapPainterCanvas();
+      void
+      DrawLabel(const Projection& projection, const MapParameter& parameter,
+	    const LabelData& label);
 
-    bool DrawMap(const StyleConfig& styleConfig,
-                 const Projection& projection,
-                 const MapParameter& parameter,
-                 const MapData& data,
-                 JNIEnv *env,
-                 jobject object);
-  };
+      void
+      DrawContourLabel(const Projection& projection, const MapParameter& parameter,
+	    const PathTextStyle& style, const std::string& text, size_t transStart,
+	    size_t transEnd);
+
+      void
+      DrawSymbol(const Projection& projection, const MapParameter& parameter, const Symbol& symbol,
+	    double x, double y);
+
+      void
+      DrawContourSymbol(const Projection& projection, const MapParameter& parameter,
+	    const Symbol& symbol, double space, size_t transStart, size_t transEnd);
+
+      void
+      DrawIcon(const IconStyle* style, double x, double y);
+
+      void
+      DrawPath(const Projection& projection, const MapParameter& parameter, const Color& color,
+	    double width, const std::vector<double>& dash, LineStyle::CapStyle startCap,
+	    LineStyle::CapStyle endCap, size_t transStart, size_t transEnd);
+
+      void
+      DrawArea(const Projection& projection, const MapParameter& parameter, const AreaData& area);
+
+      void
+      DrawArea(const std::vector<PolyData>& data, const AreaRef& area, size_t outerId, size_t ringId);
+
+//    void DrawArea(const FillStyle& style,
+//                  const MapParameter& parameter,
+//                  double x,
+//                  double y,
+//                  double width,
+//                  double height);
+
+      void
+      DrawGround(const Projection& projection, const MapParameter& parameter,
+	    const FillStyle& style);
+
+      bool
+      Draw(const StyleConfig& styleConfig, const Projection& projection,
+	    const MapParameter& parameter, const MapData& data);
+
+      void
+      PrepareAreas(const StyleConfig& styleConfig, const Projection& projection,
+	    const MapParameter& parameter, const MapData& data);
+
+
+      void
+      PrepareWays(const StyleConfig& styleConfig, const Projection& projection,
+	    const MapParameter& parameter, const MapData& data);
+
+//      void
+//      DrawWays(const StyleConfig& styleConfig, const Projection& projection,
+//	    const MapParameter& parameter, const MapData& data);
+
+   public:
+      MapPainterCanvas(JNIEnv *env);
+      virtual
+      ~MapPainterCanvas();
+
+      bool
+      DrawMap(const StyleConfig& styleConfig, const Projection& projection,
+	    const MapParameter& parameter, const MapData& data, JNIEnv *env, jobject object);
+   };
 }
 
 #endif	// __MAP_PAINTER_CANVAS_H__
-

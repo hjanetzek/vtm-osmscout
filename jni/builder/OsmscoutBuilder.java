@@ -8,6 +8,7 @@ public class OsmscoutBuilder {
 	        "libosmscout/libosmscout/src/osmscout/AreaAreaIndex.cpp",
 	        "libosmscout/libosmscout/src/osmscout/AreaNodeIndex.cpp",
 	        "libosmscout/libosmscout/src/osmscout/AreaWayIndex.cpp",
+	        "libosmscout/libosmscout/src/osmscout/AttributeAccess.cpp",
 	        "libosmscout/libosmscout/src/osmscout/CityStreetIndex.cpp",
 	        "libosmscout/libosmscout/src/osmscout/Database.cpp",
 	        "libosmscout/libosmscout/src/osmscout/GroundTile.cpp",
@@ -56,7 +57,7 @@ public class OsmscoutBuilder {
 	};
 
 	static String[] headers = { ".",
-			"include",
+	        "include",
 	        "libosmscout/libosmscout/include",
 	        "libosmscout/libosmscout-map/include"
 	};
@@ -65,7 +66,7 @@ public class OsmscoutBuilder {
 	//
 	public static void main(String[] args) {
 
-		String cflags = " -ffast-math -std=gnu++0x";
+		String cflags = " -std=gnu++0x -Wno-sign-compare -g";
 
 		BuildTarget win32home = BuildTarget.newDefaultTarget(TargetOs.Windows,
 		                                                     false);
@@ -104,7 +105,8 @@ public class OsmscoutBuilder {
 		lin64.cppIncludes = sources;
 		lin64.cFlags += cflags;
 		lin64.cppFlags += cflags;
-		
+		lin64.linkerFlags += " -lm";
+
 		// BuildTarget mac = BuildTarget.newDefaultTarget(TargetOs.MacOsX,
 		// false);
 		// mac.headerDirs = headers;

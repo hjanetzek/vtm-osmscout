@@ -27,12 +27,12 @@ public class MapParameter {
 
 	public MapParameter() {
 
-		mJniMapParameterIndex=jniConstructor();
+		mJniMapParameterIndex = jniConstructor();
 	}
 
 	public MapParameter(int jniMapParameterIndex) {
 
-		mJniMapParameterIndex=jniMapParameterIndex;
+		mJniMapParameterIndex = jniMapParameterIndex;
 	}
 
 	protected void finalize() throws Throwable {
@@ -52,9 +52,9 @@ public class MapParameter {
 
 		String[] pathsArray = new String[iconPaths.size()];
 
-		for(int i=0; i<iconPaths.size(); i++) {
-			
-			pathsArray[i]=iconPaths.elementAt(i);
+		for (int i = 0; i < iconPaths.size(); i++) {
+
+			pathsArray[i] = iconPaths.elementAt(i);
 		}
 
 		jniSetIconPaths(mJniMapParameterIndex, pathsArray);
@@ -64,21 +64,21 @@ public class MapParameter {
 
 		String[] pathsArray = new String[patternPaths.size()];
 
-		for(int i=0; i<patternPaths.size(); i++) {
-			
-			pathsArray[i]=patternPaths.elementAt(i);
+		for (int i = 0; i < patternPaths.size(); i++) {
+
+			pathsArray[i] = patternPaths.elementAt(i);
 		}
 
 		jniSetPatternPaths(mJniMapParameterIndex, pathsArray);
 	}
-	
+
 	public void setRenderSeaLand(boolean render) {
-		
+
 		jniSetRenderSeaLand(mJniMapParameterIndex, render);
 	}
 
 	public boolean getRenderSeaLand() {
-		
+
 		return jniGetRenderSeaLand(mJniMapParameterIndex);
 	}
 
@@ -88,13 +88,20 @@ public class MapParameter {
 	private native void jniDestructor(int jniMapParameterIndex);
 
 	private native void jniSetIconPaths(int jniMapParameterIndex,
-											String[] pathsArray);
+	                                    String[] pathsArray);
 
 	private native void jniSetPatternPaths(int jniMapParameterIndex,
-											String[] pathsArray);
-	
+	                                       String[] pathsArray);
+
 	private native void jniSetRenderSeaLand(int jniMapParameterIndex,
-											boolean render);
-	
+	                                        boolean render);
+
+	private native void jniSetLowZoomOptimization(int jniMapParameterIndex,
+	                                              boolean enabled);
+
 	private native boolean jniGetRenderSeaLand(int jniMapParameterIndex);
+
+	// public void setLowZoomOptimization(boolean enabled) {
+	// jniSetLowZoomOptimization(mJniMapParameterIndex, enabled);
+	// }
 }

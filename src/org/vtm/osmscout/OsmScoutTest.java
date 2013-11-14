@@ -1,5 +1,6 @@
 package org.vtm.osmscout;
 
+import org.oscim.tiling.MapTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +12,12 @@ import osm.scout.MercatorProjection;
 import osm.scout.ObjectTypeSets;
 import osm.scout.StyleConfig;
 
-import com.badlogic.gdx.utils.SharedLibraryLoader;
-
 public class OsmScoutTest {
+	static {
+		System.loadLibrary("osmscout64");
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+	}
+
 	private static final Logger log = LoggerFactory.getLogger(OsmScoutTest.class);
 
 	// OsmScout objects
@@ -50,11 +54,26 @@ public class OsmScoutTest {
 
 		// Activate sea/land rendering
 		mMapParameter.setRenderSeaLand(true);
+		// mMapParameter.setLowZoomOptimization(true);
 
 		mProjection = new MercatorProjection();
-		mProjection.setSize(1000, 1000);
-		mProjection.setPos(13.3, 52.5);
-		mProjection.setMagnification(1 << 13);
+		// mProjection.setSize(4096, 4096);
+		// mProjection.setPos(13.3, 52.5);
+		// mProjection.setMagnification(1 << 13);
+
+		MapTile tile = new MapTile(8800, 5373, (byte) 14);
+		double w = 1.0 / (1 << tile.zoomLevel);
+
+		double minLon =
+		        org.oscim.core.MercatorProjection.toLongitude(tile.x);
+		double maxLon = org.oscim.core.MercatorProjection.toLongitude(tile.x
+		                                                              + w);
+		double minLat = org.oscim.core.MercatorProjection.toLatitude(tile.y +
+		                                                             w);
+		double maxLat = org.oscim.core.MercatorProjection.toLatitude(tile.y);
+		mProjection.set(minLon, minLat, maxLon, maxLat, (1 << 14), 4096);
+
+		// mProjection.set(tile);
 
 		// Get object type sets for current magnification
 		ObjectTypeSets typeSets = mStyleConfig.getObjectTypesWithMaxMag(
@@ -97,7 +116,7 @@ public class OsmScoutTest {
 
 	public static void main(String[] args) {
 
-		new SharedLibraryLoader().load("osmscout");
+		// new SharedLibraryLoader().load("osmscout");
 
 		new OsmScoutTest().init();
 	}

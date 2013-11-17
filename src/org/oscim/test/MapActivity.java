@@ -34,22 +34,9 @@ public class MapActivity extends org.oscim.android.MapActivity {
 		pos.setScale(1 << 15);
 		mMapView.setMapPosition(pos);
 
-		// TileSource tileSource = new OSciMap4TileSource();
-		// tileSource.setOption("url",
-		// "http://city.informatik.uni-bremen.de/tiles/vtm");
-
 		MapTileLayer l = mMapView.setBaseMap(tileSource);
 
 		l.setRenderTheme(InternalRenderTheme.DEFAULT);
-		// l.setRenderTheme(InternalRenderTheme.TRONRENDER);
-
-		// mMap.setBackgroundMap(new BitmapTileLayer(mMap,
-		// MapQuestAerial.INSTANCE));
-
-		// mMapView.getLayerManager().add(new GenericOverlay(mMapView, new
-		// GridRenderLayer(mMapView)));
-		// mMapView.getLayerManager().add(new GenericOverlay(mMapView, new
-		// HexagonRenderLayer(mMapView)));
 
 		mMapView.setClickable(true);
 		mMapView.setFocusable(true);

@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="jni/builder"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/vtm-libs/gdx/gdx-jnigen-sources.jar"/>
-	<classpathentry kind="lib" path="/vtm-libs/gdx/gdx-jnigen.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/vtm"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/vtm-gdx"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/vtm-gdx-desktop"/>
-	<classpathentry exported="true" kind="lib" path="libs/osmscout-natives.jar"/>
-	<classpathentry kind="lib" path="/vtm-libs/libs/slf4j-api-1.7.5.jar"/>
-	<classpathentry kind="lib" path="/vtm-libs/libs/slf4j-simple-1.7.5.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/VectorTileMap"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

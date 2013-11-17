@@ -20,49 +20,7 @@
 	<fileset id="gcc-files" dir="./">
 		<exclude name="target/"/>		
 				<include name="memcpy_wrap.c"/>
-		<include name="libosmscout/libosmscout/src/osmscout/AreaAreaIndex.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/AreaNodeIndex.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/AreaWayIndex.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/AttributeAccess.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/CityStreetIndex.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/Database.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/GroundTile.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/Location.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/Node.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/OptimizeAreasLowZoom.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/OptimizeWaysLowZoom.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/TypeConfig.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/TypeConfigLoader.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/Types.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/WaterIndex.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/Way.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/Area.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/ost/Parser.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/ost/Scanner.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/Color.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/File.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/FileScanner.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/FileWriter.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/Geometry.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/Magnification.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/Projection.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/StopClock.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/String.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/util/Transformation.cpp"/>
-		<include name="libosmscout/libosmscout-map/src/osmscout/MapPainter.cpp"/>
-		<include name="libosmscout/libosmscout-map/src/osmscout/StyleConfig.cpp"/>
-		<include name="libosmscout/libosmscout-map/src/osmscout/StyleConfigLoader.cpp"/>
-		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Parser.cpp"/>
-		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Scanner.cpp"/>
-		<include name="libosmscout-jni/jniDatabase.cpp"/>
-		<include name="libosmscout-jni/jniMapData.cpp"/>
-		<include name="libosmscout-jni/jniMapPainterCanvas.cpp"/>
-		<include name="libosmscout-jni/jniMapParameter.cpp"/>
-		<include name="libosmscout-jni/jniMercatorProjection.cpp"/>
-		<include name="libosmscout-jni/jniObjectTypeSets.cpp"/>
-		<include name="libosmscout-jni/jniOnLoad.cpp"/>
-		<include name="libosmscout-jni/jniStyleConfig.cpp"/>
-		<include name="libosmscout-jni/jniTypeConfig.cpp"/>
+		<include name="**/*.c"/>
 
 		
 	</fileset>
@@ -124,7 +82,7 @@
 
 	<!-- define linker and options -->
 	<property name="linker" value="${compilerPrefix}g++${compilerSuffix}"/>
-	<property name="linker-opts" value="-shared -m64 -Wl,-wrap,memcpy -lm"/>
+	<property name="linker-opts" value="-shared -m64 -Wl,-wrap,memcpy"/>
 	<property name="libraries" value=""/>
 	
 	<!-- cleans the build directory, removes all object files and shared libs -->

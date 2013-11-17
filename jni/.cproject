@@ -43,7 +43,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="libosmscout/libosmscout-map-agg/|libosmscout/.git/|libosmscout/Android/|libosmscout/Apple/|libosmscout/berlin/|libosmscout/berlin2/|libosmscout/Demos/|libosmscout/Documentation/|libosmscout/DumpData/|libosmscout/Import/|libosmscout/libosmscout-import/|libosmscout/libosmscout-map-cairo/|libosmscout/libosmscout-map-iOSX/|libosmscout/libosmscout-map-opengl/|libosmscout/libosmscout-map-qt/|libosmscout/libosmscout-map-svg/|libosmscout/map/|libosmscout/map-test/|libosmscout/OSMScout/|libosmscout/Tests/|libosmscout/TravelJinni/|libosmscout/windows/|target/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="libosmscout/libosmscout-map-agg/|libosmscout/.git/|libosmscout/Android/|libosmscout/Apple/|libosmscout/berlin/|libosmscout/berlin2/|libosmscout/Demos/|libosmscout/Documentation/|libosmscout/DumpData/|libosmscout/Import/|libosmscout/libosmscout-import/|libosmscout/libosmscout-map-cairo/|libosmscout/libosmscout-map-iOSX/|libosmscout/libosmscout-map-opengl/|libosmscout/libosmscout-map-qt/|libosmscout/libosmscout-map-svg/|libosmscout/map/|libosmscout/map-test/|libosmscout/OSMScout/|libosmscout/Tests/|libosmscout/TravelJinni/|libosmscout/windows/|target/**" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -79,5 +79,10 @@
 		<doc-comment-owner id="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner">
 			<path value=""/>
 		</doc-comment-owner>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/vtm-osmscout-jni"/>
+		</configuration>
 	</storageModule>
 </cproject>

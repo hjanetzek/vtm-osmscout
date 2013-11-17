@@ -19,12 +19,6 @@
 
 #include <jni.h>
 #include <string.h>
-#ifdef __ANDROID__
-#include <android/log.h>
-#define DEBUG_TAG "OsmScoutJni:MapPainterCanvas"
-#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
-#endif
-
 #include <math.h>
 
 #include <osmscout/AdminRegion.h>
@@ -34,6 +28,12 @@
 
 #include <jniMapPainterCanvas.h>
 #include <jniObjectArray.h>
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#define DEBUG_TAG "OsmScoutJni:MapPainterCanvas"
+#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
+#endif
 
 using namespace osmscout;
 
@@ -92,186 +92,186 @@ namespace osmscout {
    bool
    MapPainterCanvas::HasIcon(const StyleConfig& styleConfig, const MapParameter& parameter,
 	 IconStyle& style) {
-      // Already loaded with error
-      if (style.GetIconId() == 0) {
-	 return false;
-      }
-
-      unsigned int iconIndex = style.GetIconId() - 1;
-
-      if (iconIndex < mIconLoaded.size() && mIconLoaded[iconIndex]) {
-	 return true;
-      }
-
-      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "loadIconPNG",
-	    "(Ljava/lang/String;I)Z");
-
-      if (!methodId) return false;
-
-      for (std::list<std::string>::const_iterator path = parameter.GetIconPaths().begin();
-	    path != parameter.GetIconPaths().end(); ++path) {
-	 std::string filename = *path + "/" + style.GetIconName() + ".png";
-
-	 jstring iconName = mJniEnv->NewStringUTF(filename.c_str());
-
-	 bool loaded = mJniEnv->CallBooleanMethod(mPainterObject, methodId, iconName, iconIndex);
-
-	 mJniEnv->DeleteLocalRef(iconName);
-
-	 if (loaded) {
-	    if (iconIndex >= mIconLoaded.size()) {
-	       mIconLoaded.resize(iconIndex + 1, false);
-	    }
-
-	    mIconLoaded[iconIndex] = true;
-
-	    return true;
-	 }
-      }
-
-      // Error loading icon file
-      style.SetIconId(0);
+//      // Already loaded with error
+//      if (style.GetIconId() == 0) {
+//	 return false;
+//      }
+//
+//      unsigned int iconIndex = style.GetIconId() - 1;
+//
+//      if (iconIndex < mIconLoaded.size() && mIconLoaded[iconIndex]) {
+//	 return true;
+//      }
+//
+//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "loadIconPNG",
+//	    "(Ljava/lang/String;I)Z");
+//
+//      if (!methodId) return false;
+//
+//      for (std::list<std::string>::const_iterator path = parameter.GetIconPaths().begin();
+//	    path != parameter.GetIconPaths().end(); ++path) {
+//	 std::string filename = *path + "/" + style.GetIconName() + ".png";
+//
+//	 jstring iconName = mJniEnv->NewStringUTF(filename.c_str());
+//
+//	 bool loaded = mJniEnv->CallBooleanMethod(mPainterObject, methodId, iconName, iconIndex);
+//
+//	 mJniEnv->DeleteLocalRef(iconName);
+//
+//	 if (loaded) {
+//	    if (iconIndex >= mIconLoaded.size()) {
+//	       mIconLoaded.resize(iconIndex + 1, false);
+//	    }
+//
+//	    mIconLoaded[iconIndex] = true;
+//
+//	    return true;
+//	 }
+//      }
+//
+//      // Error loading icon file
+//      style.SetIconId(0);
       return false;
    }
 
    bool
    MapPainterCanvas::HasPattern(const MapParameter& parameter, const FillStyle& style) {
       // Pattern already loaded with error
-      if (style.GetPatternId() == 0) {
-	 return false;
-      }
-
-      unsigned int patternIndex = style.GetPatternId() - 1;
-
-      if (patternIndex < mPatternLoaded.size() && mPatternLoaded[patternIndex]) {
-	 return true;
-      }
-
-      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "loadPatternPNG",
-	    "(Ljava/lang/String;I)Z");
-
-      if (!methodId) return false;
-
-      for (std::list<std::string>::const_iterator path = parameter.GetPatternPaths().begin();
-	    path != parameter.GetPatternPaths().end(); ++path) {
-	 std::string filename = *path + "/" + style.GetPatternName() + ".png";
-
-	 jstring patternName = mJniEnv->NewStringUTF(filename.c_str());
-
-	 bool loaded = mJniEnv->CallBooleanMethod(mPainterObject, methodId, patternName,
-	       patternIndex);
-
-	 mJniEnv->DeleteLocalRef(patternName);
-
-	 if (loaded) {
-	    if (patternIndex >= mPatternLoaded.size()) {
-	       mPatternLoaded.resize(patternIndex + 1, false);
-	    }
-
-	    mPatternLoaded[patternIndex] = true;
-
-	    return true;
-	 }
-      }
-
-      // Error loading icon file
-      style.SetPatternId(0);
+//      if (style.GetPatternId() == 0) {
+//	 return false;
+//      }
+//
+//      unsigned int patternIndex = style.GetPatternId() - 1;
+//
+//      if (patternIndex < mPatternLoaded.size() && mPatternLoaded[patternIndex]) {
+//	 return true;
+//      }
+//
+//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "loadPatternPNG",
+//	    "(Ljava/lang/String;I)Z");
+//
+//      if (!methodId) return false;
+//
+//      for (std::list<std::string>::const_iterator path = parameter.GetPatternPaths().begin();
+//	    path != parameter.GetPatternPaths().end(); ++path) {
+//	 std::string filename = *path + "/" + style.GetPatternName() + ".png";
+//
+//	 jstring patternName = mJniEnv->NewStringUTF(filename.c_str());
+//
+//	 bool loaded = mJniEnv->CallBooleanMethod(mPainterObject, methodId, patternName,
+//	       patternIndex);
+//
+//	 mJniEnv->DeleteLocalRef(patternName);
+//
+//	 if (loaded) {
+//	    if (patternIndex >= mPatternLoaded.size()) {
+//	       mPatternLoaded.resize(patternIndex + 1, false);
+//	    }
+//
+//	    mPatternLoaded[patternIndex] = true;
+//
+//	    return true;
+//	 }
+//      }
+//
+//      // Error loading icon file
+//      style.SetPatternId(0);
       return false;
    }
 
    void
    MapPainterCanvas::GetTextDimension(const MapParameter& parameter, double fontSize,
 	 const std::string& text, double& xOff, double& yOff, double& width, double& height) {
-      /// FIXME
-      return;
-
-      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "getTextDimension",
-	    "(Ljava/lang/String;F)Landroid/graphics/Rect;");
-
-      if (!methodId) return;
-
-      jfloat javaFontSize = fontSize;
-
-      jstring javaText = mJniEnv->NewStringUTF(text.c_str());
-
-      jobject javaRect = mJniEnv->CallObjectMethod(mPainterObject, methodId, javaText,
-	    javaFontSize);
-
-      mJniEnv->DeleteLocalRef(javaText);
-
-      xOff = yOff = 0.0;
-
-      jclass rectClass = mJniEnv->FindClass("android/graphics/Rect");
-
-      methodId = mJniEnv->GetMethodID(rectClass, "width", "()I");
-      width = (double) mJniEnv->CallIntMethod(javaRect, methodId);
-
-      methodId = mJniEnv->GetMethodID(rectClass, "height", "()I");
-      height = (double) mJniEnv->CallIntMethod(javaRect, methodId);
-
-      mJniEnv->DeleteLocalRef(javaRect);
-      mJniEnv->DeleteLocalRef(rectClass);
+//      /// FIXME
+//      return;
+//
+//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "getTextDimension",
+//	    "(Ljava/lang/String;F)Landroid/graphics/Rect;");
+//
+//      if (!methodId) return;
+//
+//      jfloat javaFontSize = fontSize;
+//
+//      jstring javaText = mJniEnv->NewStringUTF(text.c_str());
+//
+//      jobject javaRect = mJniEnv->CallObjectMethod(mPainterObject, methodId, javaText,
+//	    javaFontSize);
+//
+//      mJniEnv->DeleteLocalRef(javaText);
+//
+//      xOff = yOff = 0.0;
+//
+//      jclass rectClass = mJniEnv->FindClass("android/graphics/Rect");
+//
+//      methodId = mJniEnv->GetMethodID(rectClass, "width", "()I");
+//      width = (double) mJniEnv->CallIntMethod(javaRect, methodId);
+//
+//      methodId = mJniEnv->GetMethodID(rectClass, "height", "()I");
+//      height = (double) mJniEnv->CallIntMethod(javaRect, methodId);
+//
+//      mJniEnv->DeleteLocalRef(javaRect);
+//      mJniEnv->DeleteLocalRef(rectClass);
    }
 
    void
    MapPainterCanvas::DrawLabel(const Projection& projection, const MapParameter& parameter,
 	 const LabelData& label) {
-      jstring javaText;
-      jint javaTextColor;
-      jint javaTextStyle;
-      jfloat javaFontSize;
-      jfloat javaX;
-      jfloat javaY;
-      jobject javaBox;
-      jint javaBgColor;
-      jint javaBorderColor;
-
-      /// FIXME
-      return;
-
-      javaText = mJniEnv->NewStringUTF(label.text.c_str());
-      javaFontSize = label.fontSize;
-      javaX = (jfloat) label.x;
-      javaY = (jfloat) label.y;
-
-      if (dynamic_cast<const TextStyle*>(label.style.Get()) != NULL) {
-
-	 const TextStyle* style = dynamic_cast<const TextStyle*>(label.style.Get());
-
-	 javaTextColor = GetColorInt(style->GetTextColor().GetR(), style->GetTextColor().GetG(),
-	       style->GetTextColor().GetB(), style->GetTextColor().GetA());
-
-	 javaTextStyle = style->GetStyle();
-
-	 javaBox = NULL;
-      } else if (dynamic_cast<const ShieldStyle*>(label.style.Get()) != NULL) {
-
-	 const ShieldStyle* style = dynamic_cast<const ShieldStyle*>(label.style.Get());
-
-	 javaTextColor = GetColorInt(style->GetTextColor().GetR(), style->GetTextColor().GetG(),
-	       style->GetTextColor().GetB(), style->GetTextColor().GetA());
-
-	 javaTextStyle = TextStyle::normal;
-
-	 jclass rectClass = mJniEnv->FindClass("android/graphics/RectF");
-	 jmethodID rectMethodId = mJniEnv->GetMethodID(rectClass, "<init>", "(FFFF)V");
-	 javaBox = mJniEnv->NewObject(rectClass, rectMethodId, (jfloat) label.bx1,
-	       (jfloat) label.by1 + 1, (jfloat) label.bx2 + 1, (jfloat) label.by2 + 2);
-
-	 javaBgColor = GetColorInt(style->GetBgColor());
-	 javaBorderColor = GetColorInt(style->GetBorderColor());
-      } else
-	 return;
-
-      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawLabel",
-	    "(Ljava/lang/String;FFFIILandroid/graphics/RectF;II)V");
-
-      if (!methodId) return;
-
-      mJniEnv->CallVoidMethod(mPainterObject, methodId, javaText, javaFontSize, javaX, javaY,
-	    javaTextColor, javaTextStyle, javaBox, javaBgColor, javaBorderColor);
-
-      mJniEnv->DeleteLocalRef(javaText);
+//      jstring javaText;
+//      jint javaTextColor;
+//      jint javaTextStyle;
+//      jfloat javaFontSize;
+//      jfloat javaX;
+//      jfloat javaY;
+//      jobject javaBox;
+//      jint javaBgColor;
+//      jint javaBorderColor;
+//
+//      /// FIXME
+//      return;
+//
+//      javaText = mJniEnv->NewStringUTF(label.text.c_str());
+//      javaFontSize = label.fontSize;
+//      javaX = (jfloat) label.x;
+//      javaY = (jfloat) label.y;
+//
+//      if (dynamic_cast<const TextStyle*>(label.style.Get()) != NULL) {
+//
+//	 const TextStyle* style = dynamic_cast<const TextStyle*>(label.style.Get());
+//
+//	 javaTextColor = GetColorInt(style->GetTextColor().GetR(), style->GetTextColor().GetG(),
+//	       style->GetTextColor().GetB(), style->GetTextColor().GetA());
+//
+//	 javaTextStyle = style->GetStyle();
+//
+//	 javaBox = NULL;
+//      } else if (dynamic_cast<const ShieldStyle*>(label.style.Get()) != NULL) {
+//
+//	 const ShieldStyle* style = dynamic_cast<const ShieldStyle*>(label.style.Get());
+//
+//	 javaTextColor = GetColorInt(style->GetTextColor().GetR(), style->GetTextColor().GetG(),
+//	       style->GetTextColor().GetB(), style->GetTextColor().GetA());
+//
+//	 javaTextStyle = TextStyle::normal;
+//
+//	 jclass rectClass = mJniEnv->FindClass("android/graphics/RectF");
+//	 jmethodID rectMethodId = mJniEnv->GetMethodID(rectClass, "<init>", "(FFFF)V");
+//	 javaBox = mJniEnv->NewObject(rectClass, rectMethodId, (jfloat) label.bx1,
+//	       (jfloat) label.by1 + 1, (jfloat) label.bx2 + 1, (jfloat) label.by2 + 2);
+//
+//	 javaBgColor = GetColorInt(style->GetBgColor());
+//	 javaBorderColor = GetColorInt(style->GetBorderColor());
+//      } else
+//	 return;
+//
+//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawLabel",
+//	    "(Ljava/lang/String;FFFIILandroid/graphics/RectF;II)V");
+//
+//      if (!methodId) return;
+//
+//      mJniEnv->CallVoidMethod(mPainterObject, methodId, javaText, javaFontSize, javaX, javaY,
+//	    javaTextColor, javaTextStyle, javaBox, javaBgColor, javaBorderColor);
+//
+//      mJniEnv->DeleteLocalRef(javaText);
    }
 
    void
@@ -352,95 +352,95 @@ namespace osmscout {
    MapPainterCanvas::DrawPrimitivePath(const Projection& projection, const MapParameter& parameter,
 	 const DrawPrimitiveRef& p, double x, double y, double minX, double minY, double maxX,
 	 double maxY, double* onPathX, double* onPathY, double* segmentLengths) {
-      DrawPrimitive* primitive = p.Get();
-      double width = maxX - minX;
-      double height = maxY - minY;
-
-      if (dynamic_cast<PolygonPrimitive*>(primitive) != NULL) {
-	 PolygonPrimitive* polygon = dynamic_cast<PolygonPrimitive*>(primitive);
-
-	 int numPoints = polygon->GetCoords().size();
-
-	 float *arrayX = new float[numPoints];
-	 float *arrayY = new float[numPoints];
-
-	 int i = 0;
-
-	 for (std::list<Coord>::const_iterator pixel = polygon->GetCoords().begin();
-	       pixel != polygon->GetCoords().end(); ++pixel) {
-	    arrayX[i] = x + ConvertWidthToPixel(parameter, pixel->x - width / 2);
-	    arrayY[i] = y + ConvertWidthToPixel(parameter, maxY - pixel->y - height / 2);
-
-	    i++;
-	 }
-
-	 MapPathOnPath(arrayX, arrayY, numPoints, onPathX, onPathY, segmentLengths);
-
-	 SetPolygonFillPath(arrayX, arrayY, numPoints);
-
-	 delete arrayX;
-	 delete arrayY;
-      } else if (dynamic_cast<RectanglePrimitive*>(primitive) != NULL) {
-	 RectanglePrimitive* rectangle = dynamic_cast<RectanglePrimitive*>(primitive);
-
-	 float *arrayX = new float[4];
-	 float *arrayY = new float[4];
-
-	 // Top-left corner
-	 arrayX[0] = x + ConvertWidthToPixel(parameter, rectangle->GetTopLeft().x - width / 2);
-	 arrayY[0] = y
-	       + ConvertWidthToPixel(parameter, maxY - rectangle->GetTopLeft().y - height / 2);
-
-	 // Top-right corner
-	 arrayX[1] = arrayX[0] + ConvertWidthToPixel(parameter, rectangle->GetWidth());
-	 arrayY[1] = arrayY[0];
-
-	 // Bottom-right corner
-	 arrayX[2] = arrayX[1];
-	 arrayY[2] = arrayY[0] + ConvertWidthToPixel(parameter, rectangle->GetHeight());
-
-	 // Bottom-left corner
-	 arrayX[3] = arrayX[0];
-	 arrayY[3] = arrayY[2];
-
-	 MapPathOnPath(arrayX, arrayY, 4, onPathX, onPathY, segmentLengths);
-
-	 SetPolygonFillPath(arrayX, arrayY, 4);
-
-	 delete arrayX;
-	 delete arrayY;
-      } else if (dynamic_cast<CirclePrimitive*>(primitive) != NULL) {
-	 CirclePrimitive* circle = dynamic_cast<CirclePrimitive*>(primitive);
-
-	 jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "setCircleFillPath", "(FFF)V");
-
-	 jfloat posX = x + ConvertWidthToPixel(parameter, circle->GetCenter().x - width / 2);
-	 jfloat posY = y
-	       + ConvertWidthToPixel(parameter, maxY - circle->GetCenter().y - height / 2);
-	 jfloat radius = ConvertWidthToPixel(parameter, circle->GetRadius());
-
-	 mJniEnv->CallVoidMethod(mPainterObject, methodId, posX, posY, radius);
-      }
+//      DrawPrimitive* primitive = p.Get();
+//      double width = maxX - minX;
+//      double height = maxY - minY;
+//
+//      if (dynamic_cast<PolygonPrimitive*>(primitive) != NULL) {
+//	 PolygonPrimitive* polygon = dynamic_cast<PolygonPrimitive*>(primitive);
+//
+//	 int numPoints = polygon->GetCoords().size();
+//
+//	 float *arrayX = new float[numPoints];
+//	 float *arrayY = new float[numPoints];
+//
+//	 int i = 0;
+//
+//	 for (std::list<Coord>::const_iterator pixel = polygon->GetCoords().begin();
+//	       pixel != polygon->GetCoords().end(); ++pixel) {
+//	    arrayX[i] = x + ConvertWidthToPixel(parameter, pixel->x - width / 2);
+//	    arrayY[i] = y + ConvertWidthToPixel(parameter, maxY - pixel->y - height / 2);
+//
+//	    i++;
+//	 }
+//
+//	 MapPathOnPath(arrayX, arrayY, numPoints, onPathX, onPathY, segmentLengths);
+//
+//	 SetPolygonFillPath(arrayX, arrayY, numPoints);
+//
+//	 delete arrayX;
+//	 delete arrayY;
+//      } else if (dynamic_cast<RectanglePrimitive*>(primitive) != NULL) {
+//	 RectanglePrimitive* rectangle = dynamic_cast<RectanglePrimitive*>(primitive);
+//
+//	 float *arrayX = new float[4];
+//	 float *arrayY = new float[4];
+//
+//	 // Top-left corner
+//	 arrayX[0] = x + ConvertWidthToPixel(parameter, rectangle->GetTopLeft().x - width / 2);
+//	 arrayY[0] = y
+//	       + ConvertWidthToPixel(parameter, maxY - rectangle->GetTopLeft().y - height / 2);
+//
+//	 // Top-right corner
+//	 arrayX[1] = arrayX[0] + ConvertWidthToPixel(parameter, rectangle->GetWidth());
+//	 arrayY[1] = arrayY[0];
+//
+//	 // Bottom-right corner
+//	 arrayX[2] = arrayX[1];
+//	 arrayY[2] = arrayY[0] + ConvertWidthToPixel(parameter, rectangle->GetHeight());
+//
+//	 // Bottom-left corner
+//	 arrayX[3] = arrayX[0];
+//	 arrayY[3] = arrayY[2];
+//
+//	 MapPathOnPath(arrayX, arrayY, 4, onPathX, onPathY, segmentLengths);
+//
+//	 SetPolygonFillPath(arrayX, arrayY, 4);
+//
+//	 delete arrayX;
+//	 delete arrayY;
+//      } else if (dynamic_cast<CirclePrimitive*>(primitive) != NULL) {
+//	 CirclePrimitive* circle = dynamic_cast<CirclePrimitive*>(primitive);
+//
+//	 jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "setCircleFillPath", "(FFF)V");
+//
+//	 jfloat posX = x + ConvertWidthToPixel(parameter, circle->GetCenter().x - width / 2);
+//	 jfloat posY = y
+//	       + ConvertWidthToPixel(parameter, maxY - circle->GetCenter().y - height / 2);
+//	 jfloat radius = ConvertWidthToPixel(parameter, circle->GetRadius());
+//
+//	 mJniEnv->CallVoidMethod(mPainterObject, methodId, posX, posY, radius);
+//      }
    }
 
    void
    MapPainterCanvas::DrawSymbol(const Projection& projection, const MapParameter& parameter,
 	 const Symbol& symbol, double x, double y) {
-      double minX;
-      double minY;
-      double maxX;
-      double maxY;
-
-      symbol.GetBoundingBox(minX, minY, maxX, maxY);
-
-      for (std::list<DrawPrimitiveRef>::const_iterator p = symbol.GetPrimitives().begin();
-	    p != symbol.GetPrimitives().end(); ++p) {
-	 FillStyleRef fillStyle = (*p)->GetFillStyle();
-
-	 DrawPrimitivePath(projection, parameter, *p, x, y, minX, minY, maxX, maxY);
-
-	 DrawFillStyle(projection, parameter, *fillStyle);
-      }
+//      double minX;
+//      double minY;
+//      double maxX;
+//      double maxY;
+//
+//      symbol.GetBoundingBox(minX, minY, maxX, maxY);
+//
+//      for (std::list<DrawPrimitiveRef>::const_iterator p = symbol.GetPrimitives().begin();
+//	    p != symbol.GetPrimitives().end(); ++p) {
+//	 FillStyleRef fillStyle = (*p)->GetFillStyle();
+//
+//	 DrawPrimitivePath(projection, parameter, *p, x, y, minX, minY, maxX, maxY);
+//
+//	 DrawFillStyle(projection, parameter, *fillStyle);
+//      }
    }
 
    void
@@ -794,12 +794,15 @@ namespace osmscout {
 	 const TypeInfo tag = *tags;
 	 std::string s = tag.GetName();
 
-	 jobject jtag = mJniEnv->CallStaticObjectMethod(mPainterClass, makeTag,
-	       mJniEnv->NewStringUTF(s.c_str()));
+	 jstring tagstring = mJniEnv->NewStringUTF(s.c_str());
+	 jobject jtag = mJniEnv->CallStaticObjectMethod(mPainterClass, makeTag, tagstring);
 
 	 mTags.push_back(mJniEnv->NewGlobalRef(jtag));
 
-	// printf("tags >> %s \n", s.c_str());
+	 mJniEnv->DeleteLocalRef(jtag);
+	 mJniEnv->DeleteLocalRef(tagstring);
+
+	 // printf("tags >> %s \n", s.c_str());
       }
 
       for (std::vector<TagInfo>::const_iterator tags =
@@ -808,9 +811,13 @@ namespace osmscout {
 	 const TagInfo tag = *tags;
 	 std::string s = tag.GetName();
 
-	 jstring js = reinterpret_cast<jstring>(mJniEnv->NewGlobalRef(
-	       mJniEnv->CallObjectMethod(mJniEnv->NewStringUTF(s.c_str()), internalize)));
-	 mTagKeys.push_back(js);
+	 jstring js = mJniEnv->NewStringUTF(s.c_str());
+	 jobject internal = mJniEnv->CallObjectMethod(js, internalize);
+
+	 mTagKeys.push_back(reinterpret_cast<jstring>(mJniEnv->NewGlobalRef(internal)));
+
+	 mJniEnv->DeleteLocalRef(js);
+	 mJniEnv->DeleteLocalRef(internal);
 
 	 //printf("keys >> %s \n", s.c_str());
       }
@@ -1026,6 +1033,8 @@ namespace osmscout {
 
       mJniEnv->ReleasePrimitiveArrayCritical(arr_points, points, JNI_ABORT);
       mJniEnv->ReleasePrimitiveArrayCritical(arr_indices, indices, JNI_ABORT);
+      mJniEnv->DeleteLocalRef(obj_points);
+      mJniEnv->DeleteLocalRef(obj_indices);
 
       TypeId id = area->GetType();
       const std::vector<Tag>& tags = area->rings[outerId].attributes.GetTags();
@@ -1036,8 +1045,9 @@ namespace osmscout {
       for (int i = 0, n = tags.size(); i < n; i++) {
 	 const Tag& tag = tags[i];
 	 //printf("add tag %d %d %s\n", n, tag.key, tag.value.c_str());
-	 mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[tag.key],
-	       mJniEnv->NewStringUTF(tag.value.c_str()));
+	 jstring value = mJniEnv->NewStringUTF(tag.value.c_str());
+	 mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[tag.key], value);
+	 mJniEnv->DeleteLocalRef(value);
       }
 
       mJniEnv->CallVoidMethod(mPainterObject, mProcessArea, mMapElement);
@@ -1100,6 +1110,8 @@ namespace osmscout {
 
 	 mJniEnv->ReleasePrimitiveArrayCritical(arr_points, points, JNI_ABORT);
 	 mJniEnv->ReleasePrimitiveArrayCritical(arr_indices, indices, JNI_ABORT);
+	 mJniEnv->DeleteLocalRef(obj_points);
+	 mJniEnv->DeleteLocalRef(obj_indices);
 
 	 const TypeId id = way->GetType();
 
@@ -1108,18 +1120,19 @@ namespace osmscout {
 
 	 const std::string& name = way->GetName();
 	 if (name.length() > 0) {
-	    printf("add name %s\n", name.c_str());
-	    mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[1],
-		  mJniEnv->NewStringUTF(name.c_str()));
+	    //printf("add name %s\n", name.c_str());
+	    jstring value = mJniEnv->NewStringUTF(name.c_str());
+	    mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[1], value);
+	    mJniEnv->DeleteLocalRef(value);
 	 }
 
 	 for (int i = 0, n = way->GetAttributes().GetTags().size(); i < n; i++) {
 	    const Tag& tag = way->GetAttributes().GetTags()[i];
 
 	    //printf("add tag %d %d %s\n", n, tag.key, tag.value.c_str());
-
-	    mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[tag.key],
-		  mJniEnv->NewStringUTF(tag.value.c_str()));
+	    jstring value = mJniEnv->NewStringUTF(tag.value.c_str());
+	    mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[tag.key], value);
+	    mJniEnv->DeleteLocalRef(value);
 	 }
 
 	 mJniEnv->CallVoidMethod(mPainterObject, mProcessPath, mMapElement);

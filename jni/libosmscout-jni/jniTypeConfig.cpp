@@ -19,17 +19,18 @@
 
 #include <jni.h>
 #include <string.h>
+#include <osmscout/Database.h>
+#include <osmscout/StyleConfig.h>
+#include <osmscout/StyleConfigLoader.h>
+
+#include <jniObjectArray.h>
+
 #ifdef __ANDROID__
 #include <android/log.h>
 #define DEBUG_TAG "OsmScoutJni:TypeConfig"
 #define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
 #endif
 
-#include <osmscout/Database.h>
-#include <osmscout/StyleConfig.h>
-#include <osmscout/StyleConfigLoader.h>
-
-#include <jniObjectArray.h>
 
 using namespace osmscout;
 

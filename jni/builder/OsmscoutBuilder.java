@@ -100,12 +100,12 @@ public class OsmscoutBuilder {
 
 		BuildTarget lin64 = BuildTarget.newDefaultTarget(TargetOs.Linux, true);
 		lin64.headerDirs = headers;
-		lin64.cIncludes = sources;
+		// lin64.cIncludes = sources;
 		lin64.cppExcludes = excludeCpp;
 		lin64.cppIncludes = sources;
 		lin64.cFlags += cflags;
 		lin64.cppFlags += cflags;
-		lin64.linkerFlags += " -lm";
+		// lin64.linkerFlags += " -lm";
 
 		// BuildTarget mac = BuildTarget.newDefaultTarget(TargetOs.MacOsX,
 		// false);
@@ -115,15 +115,18 @@ public class OsmscoutBuilder {
 		// mac.cppFlags += cflags;
 		// mac.linkerFlags += " -framework CoreServices -framework Carbon";
 
-		BuildTarget android = BuildTarget.newDefaultTarget(TargetOs.Android,
-		                                                   false);
+		BuildTarget android =
+		        BuildTarget.newDefaultTarget(TargetOs.Android, false);
 		android.headerDirs = headers;
 		android.cIncludes = sources;
 		android.cppExcludes = excludeCpp;
 		android.cppIncludes = sources;
 		android.cFlags += cflags;
+		android.cFlags += " -Wno-psabi -frtti";
 		android.cppFlags += cflags;
+		android.cppFlags += " -Wno-psabi -frtti";
 		android.linkerFlags += " -llog  -lstdc++";
+
 		// BuildTarget ios = BuildTarget.newDefaultTarget(TargetOs.IOS, false);
 		// ios.headerDirs = headers;
 		// ios.cIncludes = sources;
@@ -133,7 +136,7 @@ public class OsmscoutBuilder {
 		// new NativeCodeGenerator().generate();
 		new AntScriptGenerator().generate(new BuildConfig("osmscout"),
 		                                  // win32home, win32, win64, lin32,
-		                                  // android,
+		                                  android,
 		                                  lin64);
 
 		// BuildExecutor.executeAnt("jni/build-windows32home.xml", "-v clean");

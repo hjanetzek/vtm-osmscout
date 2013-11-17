@@ -20,12 +20,6 @@
 #include <jni.h>
 #include <string.h>
 
-#ifdef __ANDROID__
-#include <android/log.h>
-#define DEBUG_TAG "OsmScoutJni:Database"
-#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
-#endif
-
 #include <osmscout/AdminRegion.h>
 #include <osmscout/Database.h>
 #include <osmscout/Node.h>
@@ -33,6 +27,12 @@
 
 #include <jniObjectArray.h>
 #include <jniObjectTypeSets.h>
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#define DEBUG_TAG "OsmScoutJni:Database"
+#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
+#endif
 
 using namespace osmscout;
 

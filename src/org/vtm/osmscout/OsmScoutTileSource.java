@@ -30,6 +30,10 @@ public class OsmScoutTileSource extends TileSource {
 	@Override
 	public OpenResult open() {
 		mDatabase = new Database();
+		String file = options.get("file");
+
+		if (file != null)
+			mMapPath = file;
 
 		if (!mDatabase.open(mMapPath)) {
 			return new OpenResult("Error opening database in <" + mMapPath + ">");

@@ -45,9 +45,17 @@ extern JniObjectArray<StyleConfig> *gStyleConfigArray;
 
 namespace osmscout {
 
-   MapPainterCanvas::MapPainterCanvas(JNIEnv *env) :
-	 MapPainter(new CoordBufferImpl<Vertex2D>()), coordBuffer(
-	       (CoordBufferImpl<Vertex2D>*) transBuffer.buffer) {
+   MapPainterCanvas::MapPainterCanvas(JNIEnv *env)
+   :
+	 coordBuffer(new CoordBufferImpl<Vertex2D>()),
+	       transBuffer(coordBuffer) {
+
+      //:MapPainter(new CoordBufferImpl<Vertex2D>()),
+      //coordBuffer((CoordBufferImpl<Vertex2D>*) transBuffer.buffer) {
+
+      coordBuffer = new CoordBufferImpl<Vertex2D>();
+      transBuffer.buffer = coordBuffer;
+
       mJniEnv = env;
       jclass c = mJniEnv->FindClass("org/oscim/core/MapElement");
       jmethodID rectMethodId = mJniEnv->GetMethodID(c, "<init>", "(II)V");
@@ -86,685 +94,8 @@ namespace osmscout {
 
       mTags.clear();
 
-      printf("cleared!!!");
+      printf("< cleared >");
    }
-
-   bool
-   MapPainterCanvas::HasIcon(const StyleConfig& styleConfig, const MapParameter& parameter,
-	 IconStyle& style) {
-//      // Already loaded with error
-//      if (style.GetIconId() == 0) {
-//	 return false;
-//      }
-//
-//      unsigned int iconIndex = style.GetIconId() - 1;
-//
-//      if (iconIndex < mIconLoaded.size() && mIconLoaded[iconIndex]) {
-//	 return true;
-//      }
-//
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "loadIconPNG",
-//	    "(Ljava/lang/String;I)Z");
-//
-//      if (!methodId) return false;
-//
-//      for (std::list<std::string>::const_iterator path = parameter.GetIconPaths().begin();
-//	    path != parameter.GetIconPaths().end(); ++path) {
-//	 std::string filename = *path + "/" + style.GetIconName() + ".png";
-//
-//	 jstring iconName = mJniEnv->NewStringUTF(filename.c_str());
-//
-//	 bool loaded = mJniEnv->CallBooleanMethod(mPainterObject, methodId, iconName, iconIndex);
-//
-//	 mJniEnv->DeleteLocalRef(iconName);
-//
-//	 if (loaded) {
-//	    if (iconIndex >= mIconLoaded.size()) {
-//	       mIconLoaded.resize(iconIndex + 1, false);
-//	    }
-//
-//	    mIconLoaded[iconIndex] = true;
-//
-//	    return true;
-//	 }
-//      }
-//
-//      // Error loading icon file
-//      style.SetIconId(0);
-      return false;
-   }
-
-   bool
-   MapPainterCanvas::HasPattern(const MapParameter& parameter, const FillStyle& style) {
-      // Pattern already loaded with error
-//      if (style.GetPatternId() == 0) {
-//	 return false;
-//      }
-//
-//      unsigned int patternIndex = style.GetPatternId() - 1;
-//
-//      if (patternIndex < mPatternLoaded.size() && mPatternLoaded[patternIndex]) {
-//	 return true;
-//      }
-//
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "loadPatternPNG",
-//	    "(Ljava/lang/String;I)Z");
-//
-//      if (!methodId) return false;
-//
-//      for (std::list<std::string>::const_iterator path = parameter.GetPatternPaths().begin();
-//	    path != parameter.GetPatternPaths().end(); ++path) {
-//	 std::string filename = *path + "/" + style.GetPatternName() + ".png";
-//
-//	 jstring patternName = mJniEnv->NewStringUTF(filename.c_str());
-//
-//	 bool loaded = mJniEnv->CallBooleanMethod(mPainterObject, methodId, patternName,
-//	       patternIndex);
-//
-//	 mJniEnv->DeleteLocalRef(patternName);
-//
-//	 if (loaded) {
-//	    if (patternIndex >= mPatternLoaded.size()) {
-//	       mPatternLoaded.resize(patternIndex + 1, false);
-//	    }
-//
-//	    mPatternLoaded[patternIndex] = true;
-//
-//	    return true;
-//	 }
-//      }
-//
-//      // Error loading icon file
-//      style.SetPatternId(0);
-      return false;
-   }
-
-   void
-   MapPainterCanvas::GetTextDimension(const MapParameter& parameter, double fontSize,
-	 const std::string& text, double& xOff, double& yOff, double& width, double& height) {
-//      /// FIXME
-//      return;
-//
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "getTextDimension",
-//	    "(Ljava/lang/String;F)Landroid/graphics/Rect;");
-//
-//      if (!methodId) return;
-//
-//      jfloat javaFontSize = fontSize;
-//
-//      jstring javaText = mJniEnv->NewStringUTF(text.c_str());
-//
-//      jobject javaRect = mJniEnv->CallObjectMethod(mPainterObject, methodId, javaText,
-//	    javaFontSize);
-//
-//      mJniEnv->DeleteLocalRef(javaText);
-//
-//      xOff = yOff = 0.0;
-//
-//      jclass rectClass = mJniEnv->FindClass("android/graphics/Rect");
-//
-//      methodId = mJniEnv->GetMethodID(rectClass, "width", "()I");
-//      width = (double) mJniEnv->CallIntMethod(javaRect, methodId);
-//
-//      methodId = mJniEnv->GetMethodID(rectClass, "height", "()I");
-//      height = (double) mJniEnv->CallIntMethod(javaRect, methodId);
-//
-//      mJniEnv->DeleteLocalRef(javaRect);
-//      mJniEnv->DeleteLocalRef(rectClass);
-   }
-
-   void
-   MapPainterCanvas::DrawLabel(const Projection& projection, const MapParameter& parameter,
-	 const LabelData& label) {
-//      jstring javaText;
-//      jint javaTextColor;
-//      jint javaTextStyle;
-//      jfloat javaFontSize;
-//      jfloat javaX;
-//      jfloat javaY;
-//      jobject javaBox;
-//      jint javaBgColor;
-//      jint javaBorderColor;
-//
-//      /// FIXME
-//      return;
-//
-//      javaText = mJniEnv->NewStringUTF(label.text.c_str());
-//      javaFontSize = label.fontSize;
-//      javaX = (jfloat) label.x;
-//      javaY = (jfloat) label.y;
-//
-//      if (dynamic_cast<const TextStyle*>(label.style.Get()) != NULL) {
-//
-//	 const TextStyle* style = dynamic_cast<const TextStyle*>(label.style.Get());
-//
-//	 javaTextColor = GetColorInt(style->GetTextColor().GetR(), style->GetTextColor().GetG(),
-//	       style->GetTextColor().GetB(), style->GetTextColor().GetA());
-//
-//	 javaTextStyle = style->GetStyle();
-//
-//	 javaBox = NULL;
-//      } else if (dynamic_cast<const ShieldStyle*>(label.style.Get()) != NULL) {
-//
-//	 const ShieldStyle* style = dynamic_cast<const ShieldStyle*>(label.style.Get());
-//
-//	 javaTextColor = GetColorInt(style->GetTextColor().GetR(), style->GetTextColor().GetG(),
-//	       style->GetTextColor().GetB(), style->GetTextColor().GetA());
-//
-//	 javaTextStyle = TextStyle::normal;
-//
-//	 jclass rectClass = mJniEnv->FindClass("android/graphics/RectF");
-//	 jmethodID rectMethodId = mJniEnv->GetMethodID(rectClass, "<init>", "(FFFF)V");
-//	 javaBox = mJniEnv->NewObject(rectClass, rectMethodId, (jfloat) label.bx1,
-//	       (jfloat) label.by1 + 1, (jfloat) label.bx2 + 1, (jfloat) label.by2 + 2);
-//
-//	 javaBgColor = GetColorInt(style->GetBgColor());
-//	 javaBorderColor = GetColorInt(style->GetBorderColor());
-//      } else
-//	 return;
-//
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawLabel",
-//	    "(Ljava/lang/String;FFFIILandroid/graphics/RectF;II)V");
-//
-//      if (!methodId) return;
-//
-//      mJniEnv->CallVoidMethod(mPainterObject, methodId, javaText, javaFontSize, javaX, javaY,
-//	    javaTextColor, javaTextStyle, javaBox, javaBgColor, javaBorderColor);
-//
-//      mJniEnv->DeleteLocalRef(javaText);
-   }
-
-   void
-   MapPainterCanvas::DrawContourLabel(const Projection& projection, const MapParameter& parameter,
-	 const PathTextStyle& style, const std::string& text, size_t transStart, size_t transEnd) {
-//    jmethodID methodId=mJniEnv->GetMethodID(mPainterClass, "drawContourLabel",
-//                     "(Ljava/lang/String;IFF[F[F)V");
-//
-//    if (!methodId)
-//      return;
-//
-//    jstring javaText=mJniEnv->NewStringUTF(text.c_str());
-//
-//    jint textColor=GetColorInt(style.GetTextColor());
-//
-//    jfloat pathLenght=0.0;
-//
-//    int numPoints=transEnd-transStart+1;
-//
-//    float *x=new float[numPoints];
-//    float *y=new float[numPoints];
-//
-//    if (transBuffer.buffer[transStart].x<=transBuffer.buffer[transEnd].x)
-//    {
-//      // Path orientation is from left to right
-//      // Direct copy of the data
-//
-//      for(int i=0; i<numPoints; i++)
-//      {
-//        x[i]=(float)transBuffer.buffer[transStart+i].getX();
-//        y[i]=(float)transBuffer.buffer[transStart+i].getY();
-//
-//        if (i!=0)
-//          pathLenght+=sqrt(pow(x[i]-x[i-1], 2.0)+pow(y[i]-y[i-1], 2.0));
-//      }
-//    }
-//    else
-//    {
-//      // Path orientation is from right to left
-//      // Inverse copy of the data
-//
-//      for(int i=0; i<numPoints; i++)
-//      {
-//        x[i]=(float)transBuffer.buffer[transEnd-i].getX();
-//        y[i]=(float)transBuffer.buffer[transEnd-i].getY();
-//
-//        if (i!=0)
-//          pathLenght+=sqrt(pow(x[i]-x[i-1], 2.0)+pow(y[i]-y[i-1], 2.0));
-//      }
-//    }
-//
-//    jfloatArray jArrayX=mJniEnv->NewFloatArray(numPoints);
-//    jfloatArray jArrayY=mJniEnv->NewFloatArray(numPoints);
-//
-//    mJniEnv->SetFloatArrayRegion(jArrayX, 0, numPoints, x);
-//    mJniEnv->SetFloatArrayRegion(jArrayY, 0, numPoints, y);
-//
-//    mJniEnv->CallVoidMethod(mPainterObject, methodId, javaText,
-//                            textColor, (jfloat)style.GetSize(),
-//                            pathLenght, jArrayX, jArrayY);
-//
-//    delete x;
-//    delete y;
-//
-//    mJniEnv->DeleteLocalRef(jArrayX);
-//    mJniEnv->DeleteLocalRef(jArrayY);
-   }
-
-   void
-   MapPainterCanvas::DrawPrimitivePath(const Projection& projection, const MapParameter& parameter,
-	 const DrawPrimitiveRef& p, double x, double y, double minX, double minY, double maxX,
-	 double maxY) {
-      DrawPrimitivePath(projection, parameter, p, x, y, minX, minY, maxX, maxY,
-      NULL, NULL, NULL);
-   }
-
-   void
-   MapPainterCanvas::DrawPrimitivePath(const Projection& projection, const MapParameter& parameter,
-	 const DrawPrimitiveRef& p, double x, double y, double minX, double minY, double maxX,
-	 double maxY, double* onPathX, double* onPathY, double* segmentLengths) {
-//      DrawPrimitive* primitive = p.Get();
-//      double width = maxX - minX;
-//      double height = maxY - minY;
-//
-//      if (dynamic_cast<PolygonPrimitive*>(primitive) != NULL) {
-//	 PolygonPrimitive* polygon = dynamic_cast<PolygonPrimitive*>(primitive);
-//
-//	 int numPoints = polygon->GetCoords().size();
-//
-//	 float *arrayX = new float[numPoints];
-//	 float *arrayY = new float[numPoints];
-//
-//	 int i = 0;
-//
-//	 for (std::list<Coord>::const_iterator pixel = polygon->GetCoords().begin();
-//	       pixel != polygon->GetCoords().end(); ++pixel) {
-//	    arrayX[i] = x + ConvertWidthToPixel(parameter, pixel->x - width / 2);
-//	    arrayY[i] = y + ConvertWidthToPixel(parameter, maxY - pixel->y - height / 2);
-//
-//	    i++;
-//	 }
-//
-//	 MapPathOnPath(arrayX, arrayY, numPoints, onPathX, onPathY, segmentLengths);
-//
-//	 SetPolygonFillPath(arrayX, arrayY, numPoints);
-//
-//	 delete arrayX;
-//	 delete arrayY;
-//      } else if (dynamic_cast<RectanglePrimitive*>(primitive) != NULL) {
-//	 RectanglePrimitive* rectangle = dynamic_cast<RectanglePrimitive*>(primitive);
-//
-//	 float *arrayX = new float[4];
-//	 float *arrayY = new float[4];
-//
-//	 // Top-left corner
-//	 arrayX[0] = x + ConvertWidthToPixel(parameter, rectangle->GetTopLeft().x - width / 2);
-//	 arrayY[0] = y
-//	       + ConvertWidthToPixel(parameter, maxY - rectangle->GetTopLeft().y - height / 2);
-//
-//	 // Top-right corner
-//	 arrayX[1] = arrayX[0] + ConvertWidthToPixel(parameter, rectangle->GetWidth());
-//	 arrayY[1] = arrayY[0];
-//
-//	 // Bottom-right corner
-//	 arrayX[2] = arrayX[1];
-//	 arrayY[2] = arrayY[0] + ConvertWidthToPixel(parameter, rectangle->GetHeight());
-//
-//	 // Bottom-left corner
-//	 arrayX[3] = arrayX[0];
-//	 arrayY[3] = arrayY[2];
-//
-//	 MapPathOnPath(arrayX, arrayY, 4, onPathX, onPathY, segmentLengths);
-//
-//	 SetPolygonFillPath(arrayX, arrayY, 4);
-//
-//	 delete arrayX;
-//	 delete arrayY;
-//      } else if (dynamic_cast<CirclePrimitive*>(primitive) != NULL) {
-//	 CirclePrimitive* circle = dynamic_cast<CirclePrimitive*>(primitive);
-//
-//	 jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "setCircleFillPath", "(FFF)V");
-//
-//	 jfloat posX = x + ConvertWidthToPixel(parameter, circle->GetCenter().x - width / 2);
-//	 jfloat posY = y
-//	       + ConvertWidthToPixel(parameter, maxY - circle->GetCenter().y - height / 2);
-//	 jfloat radius = ConvertWidthToPixel(parameter, circle->GetRadius());
-//
-//	 mJniEnv->CallVoidMethod(mPainterObject, methodId, posX, posY, radius);
-//      }
-   }
-
-   void
-   MapPainterCanvas::DrawSymbol(const Projection& projection, const MapParameter& parameter,
-	 const Symbol& symbol, double x, double y) {
-//      double minX;
-//      double minY;
-//      double maxX;
-//      double maxY;
-//
-//      symbol.GetBoundingBox(minX, minY, maxX, maxY);
-//
-//      for (std::list<DrawPrimitiveRef>::const_iterator p = symbol.GetPrimitives().begin();
-//	    p != symbol.GetPrimitives().end(); ++p) {
-//	 FillStyleRef fillStyle = (*p)->GetFillStyle();
-//
-//	 DrawPrimitivePath(projection, parameter, *p, x, y, minX, minY, maxX, maxY);
-//
-//	 DrawFillStyle(projection, parameter, *fillStyle);
-//      }
-   }
-
-   void
-   MapPainterCanvas::DrawContourSymbol(const Projection& projection, const MapParameter& parameter,
-	 const Symbol& symbol, double space, size_t transStart, size_t transEnd) {
-//    double lineLength=0;
-//
-//    int numPoints=transEnd-transStart+1;
-//
-//    double *onPathX=new double[numPoints];
-//    double *onPathY=new double[numPoints];
-//
-//    double *segmentLengths=new double[numPoints-1];
-//
-//    for(int i=0; i<numPoints; i++)
-//    {
-//      onPathX[i]=(double)transBuffer.buffer[transStart+i].getX();
-//      onPathY[i]=(double)transBuffer.buffer[transStart+i].getY();
-//
-//      if (i!=0)
-//        segmentLengths[i-1]=sqrt(pow(onPathX[i]-onPathX[i-1], 2.0)+
-//                                 pow(onPathY[i]-onPathY[i-1], 2.0));
-//
-//      lineLength+=segmentLengths[i-1];
-//    }
-//
-//    double minX;
-//    double minY;
-//    double maxX;
-//    double maxY;
-//
-//    symbol.GetBoundingBox(minX,minY,maxX,maxY);
-//
-//    double width=ConvertWidthToPixel(parameter,maxX-minX);
-//    double height=ConvertWidthToPixel(parameter,maxY-minY);
-//
-//    for (std::list<DrawPrimitiveRef>::const_iterator p=symbol.GetPrimitives().begin();
-//         p!=symbol.GetPrimitives().end();
-//         ++p)
-//    {
-//      FillStyleRef fillStyle=(*p)->GetFillStyle();
-//
-//      double offset=space/2;
-//
-//      while (offset+width<lineLength)
-//      {
-//        DrawPrimitivePath(projection,
-//                          parameter,
-//                          *p,
-//                          offset+width/2,
-//                          0,
-//                          minX,
-//                          minY,
-//                          maxX,
-//                          maxY,
-//                          onPathX, onPathY,
-//                          segmentLengths);
-//
-//        DrawFillStyle(projection,
-//                      parameter,
-//                      *fillStyle);
-//
-//        offset+=width+space;
-//      }
-//    }
-   }
-
-   void
-   MapPainterCanvas::SetPolygonFillPath(float* x, float* y, int numPoints) {
-//      jfloatArray jArrayX = mJniEnv->NewFloatArray(numPoints);
-//      jfloatArray jArrayY = mJniEnv->NewFloatArray(numPoints);
-//
-//      mJniEnv->SetFloatArrayRegion(jArrayX, 0, numPoints, x);
-//      mJniEnv->SetFloatArrayRegion(jArrayY, 0, numPoints, y);
-//
-//      printf("set fill\n");
-//
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "setPolygonFillPath", "([F[F)V");
-//
-//      printf("set fill<\n");
-//
-//      mJniEnv->CallVoidMethod(mPainterObject, methodId, jArrayX, jArrayY);
-//
-//      mJniEnv->DeleteLocalRef(jArrayX);
-//      mJniEnv->DeleteLocalRef(jArrayY);
-   }
-
-   void
-   MapPainterCanvas::MapPathOnPath(float* arrayX, float* arrayY, int numPoints, double* onPathX,
-	 double* onPathY, double* segmentLengths) {
-      if ((onPathX == NULL) || (onPathY == NULL) || (segmentLengths == NULL)) return;
-
-//      for (int i = 0; i < numPoints; i++) {
-//	 // First, find the segment for the given point
-//	 int s = 0;
-//
-//	 while (arrayX[i] > segmentLengths[s]) {
-//	    arrayX[i] -= segmentLengths[s];
-//	    s++;
-//	 }
-//
-//	 // Relative offset in the current segment ([0..1])
-//	 double ratio = arrayX[i] / segmentLengths[s];
-//
-//	 // Line polynomial
-//	 double x = onPathX[s] * (1 - ratio) + onPathX[s + 1] * ratio;
-//	 double y = onPathY[s] * (1 - ratio) + onPathY[s + 1] * ratio;
-//
-//	 // Line gradient
-//	 double dx = -(onPathX[s] - onPathX[s + 1]);
-//	 double dy = -(onPathY[s] - onPathY[s + 1]);
-//
-//	 // optimization for: ratio = the_y / sqrt (dx * dx + dy * dy)
-//	 ratio = arrayY[i] / segmentLengths[s];
-//	 x += -dy * ratio;
-//	 y += dx * ratio;
-//
-//	 arrayX[i] = (float) x;
-//	 arrayY[i] = (float) y;
-//      }
-   }
-
-   void
-   MapPainterCanvas::DrawIcon(const IconStyle* style, double x, double y) {
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawIcon", "(IFF)V");
-//      if (!methodId) return;
-//
-//      jint iconIndex = style->GetIconId() - 1;
-//
-//      mJniEnv->CallVoidMethod(mPainterObject, methodId, iconIndex, (jfloat) x, (jfloat) y);
-   }
-
-   void
-   MapPainterCanvas::DrawPath(const Projection& projection, const MapParameter& parameter,
-	 const Color& color, double width, const std::vector<double>& dash,
-	 LineStyle::CapStyle startCap, LineStyle::CapStyle endCap, size_t transStart,
-	 size_t transEnd) {
-
-//      jint javaColor = GetColorInt(color);
-//
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawPath", "(IF[FZZ[F[F)V");
-//
-//      if (!methodId) return;
-//
-//      jfloatArray javaDash = NULL;
-//      float *dashArray = NULL;
-//
-//      if (!dash.empty()) {
-//
-//	 javaDash = mJniEnv->NewFloatArray(dash.size());
-//
-//	 dashArray = new float[dash.size()];
-//
-//	 for (unsigned int i = 0; i < dash.size(); i++) {
-//	    dashArray[i] = dash[i] * width;
-//	 }
-//
-//	 mJniEnv->SetFloatArrayRegion(javaDash, 0, dash.size(), dashArray);
-//      }
-//
-//      jboolean roundedStartCap = JNI_FALSE;
-//      jboolean roundedEndCap = JNI_FALSE;
-//
-//      if (dash.empty()) {
-//
-//	 if (startCap == LineStyle::capRound) roundedStartCap = JNI_TRUE;
-//
-//	 if (endCap == LineStyle::capRound) roundedEndCap = JNI_TRUE;
-//      }
-//
-//      int numPoints = transEnd - transStart + 1;
-//
-//      float *x = new float[numPoints];
-//      float *y = new float[numPoints];
-//
-//      for (int i = 0; i < numPoints; i++) {
-//	 x[i] = (float) coordBuffer->buffer[transStart + i].GetX();
-//	 y[i] = (float) coordBuffer->buffer[transStart + i].GetY();
-//      }
-//
-//      jfloatArray jArrayX = mJniEnv->NewFloatArray(numPoints);
-//      jfloatArray jArrayY = mJniEnv->NewFloatArray(numPoints);
-//
-//      mJniEnv->SetFloatArrayRegion(jArrayX, 0, numPoints, x);
-//      mJniEnv->SetFloatArrayRegion(jArrayY, 0, numPoints, y);
-//
-//      mJniEnv->CallVoidMethod(mPainterObject, methodId, javaColor, (jfloat) width, javaDash,
-//	    roundedStartCap, roundedEndCap, jArrayX, jArrayY);
-//
-//      delete x;
-//      delete y;
-//
-//      mJniEnv->DeleteLocalRef(jArrayX);
-//      mJniEnv->DeleteLocalRef(jArrayY);
-//
-//      if (javaDash) {
-//
-//	 delete dashArray;
-//	 mJniEnv->DeleteLocalRef(javaDash);
-//      }
-   }
-
-   void
-   MapPainterCanvas::DrawFillStyle(const Projection& projection, const MapParameter& parameter,
-	 const FillStyle& fill) {
-//      if (fill.HasPattern() && projection.GetMagnification() >= fill.GetPatternMinMag()
-//	    && HasPattern(parameter, fill)) {
-//
-//	 jint patternId = fill.GetPatternId() - 1;
-//	 printf("draw pattern\n");
-//	 jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawPatternArea", "(I)V");
-//
-//	 printf("draw pattern<\n");
-//
-//	 if (!methodId) return;
-//
-//	 mJniEnv->CallVoidMethod(mPainterObject, methodId, patternId);
-//      } else if (fill.GetFillColor().IsVisible()) {
-//
-//	 jint color = GetColorInt(fill.GetFillColor());
-//	 printf("draw filled\n");
-//
-//	 jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawFilledArea", "(I)V");
-//	 printf("draw filled<\n");
-//
-//	 if (!methodId) return;
-//
-//	 mJniEnv->CallVoidMethod(mPainterObject, methodId, color);
-//      }
-//
-//      // Draw  border
-//      if (fill.GetBorderWidth() > 0 && fill.GetBorderColor().IsVisible()
-//	    && fill.GetBorderWidth() >= mMinimumLineWidth) {
-//	 double borderWidth = ConvertWidthToPixel(parameter, fill.GetBorderWidth());
-//
-//	 if (borderWidth >= parameter.GetLineMinWidthPixel()) {
-//
-//	    jfloatArray javaDash = NULL;
-//	    float *dashArray = NULL;
-//
-//	    std::vector<double> dash = fill.GetBorderDash();
-//
-//	    if (!dash.empty()) {
-//	       javaDash = mJniEnv->NewFloatArray(dash.size());
-//
-//	       dashArray = new float[dash.size()];
-//
-//	       for (unsigned int i = 0; i < dash.size(); i++) {
-//		  dashArray[i] = dash[i] * borderWidth;
-//	       }
-//
-//	       mJniEnv->SetFloatArrayRegion(javaDash, 0, dash.size(), dashArray);
-//	    }
-//	    printf("draw border\n");
-//
-//	    jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawAreaBorder", "(IF[F)V");
-//
-//	    printf("draw border<\n");
-//
-//	    jint javaColor = GetColorInt(fill.GetBorderColor());
-//
-//	    mJniEnv->CallVoidMethod(mPainterObject, methodId, javaColor, (jfloat) borderWidth,
-//		  javaDash);
-//
-//	 }
-//      }
-   }
-
-//void
-//MapPainterCanvas::DrawArea(const FillStyle& style, const MapParameter& parameter, double x,
-//	 double y, double width, double height) {
-//
-//      jint color = GetColorInt(style.GetFillColor());
-//
-//      jmethodID methodId = mJniEnv->GetMethodID(mPainterClass, "drawArea", "(IFFFF)V");
-//
-//      if (!methodId) return;
-//
-//      mJniEnv->CallVoidMethod(mPainterObject, methodId, color, (jfloat) x, (jfloat) y,
-//	    (jfloat) width, (jfloat) height);
-   //  }
-
-//   void
-//   MapPainterCanvas::DrawWay(const StyleConfig& styleConfig, const Projection& projection,
-//	 const MapParameter& parameter, const WayData& data) {
-//      Color color=data.lineStyle->GetLineColor();
-//
-//      if (data.lineStyle->HasDashes() &&
-//          data.lineStyle->GetGapColor().GetA()>0.0) {
-//        DrawPath(projection,
-//                 parameter,
-//                 data.lineStyle->GetGapColor(),
-//                 data.lineWidth,
-//                 emptyDash,
-//                 data.startIsClosed ? data.lineStyle->GetEndCap() : data.lineStyle->GetJoinCap(),
-//                 data.endIsClosed ? data.lineStyle->GetEndCap() : data.lineStyle->GetJoinCap(),
-//                 data.transStart,data.transEnd);
-//      }
-//
-//      DrawPath(projection,
-//               parameter,
-//               color,
-//               data.lineWidth,
-//               data.lineStyle->GetDash(),
-//               data.startIsClosed ? data.lineStyle->GetEndCap() : data.lineStyle->GetJoinCap(),
-//               data.endIsClosed ? data.lineStyle->GetEndCap() : data.lineStyle->GetJoinCap(),
-//               data.transStart,data.transEnd);
-//
-//      waysDrawn++;
-   //  }
-
-//   void
-//   MapPainterCanvas::DrawWays(const StyleConfig& styleConfig, const Projection& projection,
-//	 const MapParameter& parameter, const MapData& data) {
-//
-//      for (std::list<WayData>::const_iterator it = wayData.begin(); it != wayData.end(); ++it) {
-//	 //DrawWay(styleConfig, projection, parameter, *way);
-//	 const WayData& way = *it;
-//
-//	 //data.transStart,
-//	 //data.transEnd
-//
-//      }
-//   }
 
    bool
    MapPainterCanvas::DrawMap(const StyleConfig& styleConfig, const Projection& projection,
@@ -829,23 +160,13 @@ namespace osmscout {
 
       waysSegments = 0;
       waysDrawn = 0;
-      waysLabelDrawn = 0;
 
       areasSegments = 0;
       areasDrawn = 0;
-      areasLabelDrawn = 0;
 
       nodesDrawn = 0;
-      labelsDrawn = 0;
-
-      labels.clear();
-      overlayLabels.clear();
 
       transBuffer.Reset();
-
-      labelSpace = ConvertWidthToPixel(parameter, parameter.GetLabelSpace());
-      shieldLabelSpace = ConvertWidthToPixel(parameter, parameter.GetPlateLabelSpace());
-      sameLabelSpace = ConvertWidthToPixel(parameter, parameter.GetSameLabelSpace());
 
       if (parameter.IsAborted()) {
 	 return false;
@@ -863,30 +184,11 @@ namespace osmscout {
 	       << parameter.GetDPI() << " DPI" << std::endl;
       }
 
-      //
-      // Setup and Precalculation
-      //
-
-      StopClock prepareAreasTimer;
-
       PrepareAreas(styleConfig, projection, parameter, data);
-
-      prepareAreasTimer.Stop();
-
-      if (parameter.IsAborted()) {
-	 return false;
-      }
-
-      StopClock prepareWaysTimer;
 
       PrepareWays(styleConfig, projection, parameter, data);
 
-      prepareWaysTimer.Stop();
-
-      if (parameter.IsAborted()) {
-	 return false;
-      }
-
+      printf("ways drawn %d, areas drawn %d", (int) waysDrawn, (int) areasDrawn);
       return true;
    }
 
@@ -925,12 +227,12 @@ namespace osmscout {
 		  FillStyleRef fillStyle;
 
 		  if (ring.ring == Area::outerRingId) {
-		     styleConfig.GetAreaFillStyle(area->GetType(), ring.GetAttributes(), projection,
-			   parameter.GetDPI(), fillStyle);
+		     styleConfig.GetAreaFillStyle(area->GetType(), ring.GetAttributes(),
+			   projection, parameter.GetDPI(), fillStyle);
 
 		  } else if (ring.GetType() != typeIgnore) {
-		     styleConfig.GetAreaFillStyle(ring.GetType(), ring.GetAttributes(), projection,
-			   parameter.GetDPI(), fillStyle);
+		     styleConfig.GetAreaFillStyle(ring.GetType(), ring.GetAttributes(),
+			   projection, parameter.GetDPI(), fillStyle);
 		  }
 
 		  if (fillStyle.Invalid()) {
@@ -940,12 +242,11 @@ namespace osmscout {
 		  foundRing = true;
 
 		  if (!IsVisible(projection, ring.nodes, fillStyle->GetBorderWidth() / 2)) {
+		     areasDrawn++;
 		     continue;
 		  }
 
-		  //printf("%s\n", styleConfig.GetTypeConfig()->GetTypeInfo(area->GetType()).GetName().c_str());
 		  DrawArea(data, area, i, ringId);
-
 		  areasSegments++;
 	       }
 	    }
@@ -955,6 +256,63 @@ namespace osmscout {
       }
    }
 
+   bool
+   MapPainterCanvas::IsVisible(const Projection& projection,
+	 const std::vector<GeoCoord>& nodes,
+	 double pixelOffset) const
+	 {
+      if (nodes.empty()) {
+	 return false;
+      }
+
+      // Bounding box
+      double lonMin = nodes[0].GetLon();
+      double lonMax = nodes[0].GetLon();
+      double latMin = nodes[0].GetLat();
+      double latMax = nodes[0].GetLat();
+
+      for (size_t i = 1; i < nodes.size(); i++) {
+	 lonMin = std::min(lonMin, nodes[i].GetLon());
+	 lonMax = std::max(lonMax, nodes[i].GetLon());
+	 latMin = std::min(latMin, nodes[i].GetLat());
+	 latMax = std::max(latMax, nodes[i].GetLat());
+      }
+
+      double xMin;
+      double xMax;
+      double yMin;
+      double yMax;
+      double y1;
+      double y2;
+
+      if (!projection.GeoToPixel(lonMin,
+	    latMax,
+	    xMin,
+	    y1)) {
+	 return false;
+      }
+
+      if (!projection.GeoToPixel(lonMax,
+	    latMin,
+	    xMax,
+	    y2)) {
+	 return false;
+      }
+
+      yMax = std::max(y1, y2);
+      yMin = std::min(y1, y2);
+
+      xMin -= pixelOffset;
+      yMin -= pixelOffset;
+
+      xMax += pixelOffset;
+      yMax += pixelOffset;
+
+      return !(xMin >= projection.GetWidth() ||
+	    yMin >= projection.GetHeight() ||
+	    xMax < 0 ||
+	    yMax < 0);
+   }
    void
    MapPainterCanvas::DrawArea(const std::vector<PolyData>& data, const AreaRef& area,
 	 size_t outerId, size_t ringId) {
@@ -1055,18 +413,11 @@ namespace osmscout {
    }
 
    void
-   MapPainterCanvas::DrawArea(const Projection& projection, const MapParameter& parameter,
-	 const AreaData& area) {
-
-   }
-
-   void
    MapPainterCanvas::PrepareWays(const StyleConfig& styleConfig, const Projection& projection,
 	 const MapParameter& parameter, const MapData& data) {
-      //wayData.clear();
-      //wayPathData.clear();
-      size_t transStart = 0; // Make the compiler happy
-      size_t transEnd = 0; // Make the compiler happy
+
+      size_t transStart = 0;
+      size_t transEnd = 0;
 
       for (std::vector<WayRef>::const_iterator w = data.ways.begin(); w != data.ways.end(); ++w) {
 	 const WayRef& way = *w;
@@ -1074,6 +425,11 @@ namespace osmscout {
 //	 PrepareWaySegment(styleConfig, projection, parameter,
 //	       ObjectFileRef(way->GetFileOffset(), refWay), way->GetAttributes(), way->nodes,
 //	       way->ids);
+
+	 if (!IsVisible(projection, way->nodes, 4)) {
+	    waysDrawn++;
+	    continue;
+	 }
 
 	 transBuffer.TransformWay(projection, parameter.GetOptimizeWayNodes(), way->nodes,
 	       transStart, transEnd, parameter.GetOptimizeErrorToleranceDots());
@@ -1138,34 +494,6 @@ namespace osmscout {
 	 mJniEnv->CallVoidMethod(mPainterObject, mProcessPath, mMapElement);
 
       }
-
-//      for (std::list<WayRef>::const_iterator p = data.poiWays.begin(); p != data.poiWays.end();
-//	    ++p) {
-//	 const WayRef& way = *p;
-//
-//	 PrepareWaySegment(styleConfig, projection, parameter,
-//	       ObjectFileRef(way->GetFileOffset(), refWay), way->GetAttributes(), way->nodes,
-//	       way->ids);
-//      }
-
-      //wayData.sort();
-   }
-
-   int
-   MapPainterCanvas::GetColorInt(double r, double g, double b, double a) {
-      int colorA = (int) floor(255 * a + 0.5);
-      int colorR = (int) floor(255 * r + 0.5);
-      int colorG = (int) floor(255 * g + 0.5);
-      int colorB = (int) floor(255 * b + 0.5);
-
-      int color = ((colorA << 24) | (colorR << 16) | (colorG << 8) | (colorB));
-
-      return color;
-   }
-
-   int
-   MapPainterCanvas::GetColorInt(Color color) {
-      return GetColorInt(color.GetR(), color.GetG(), color.GetB(), color.GetA());
    }
 
    void
@@ -1202,37 +530,35 @@ extern "C" {
       MapPainterCanvas *nativeMapPainter = gMapPainterArray->Get(mapPainterIndex);
 
       if (!nativeMapPainter) {
-	 printf("jniDrawMap(): NULL MapPainter object");
+	 printf("jniDrawMap(): NULL MapPainter object\n");
 	 return JNI_FALSE;
       }
 
       StyleConfig *nativeStyleConfig = gStyleConfigArray->Get(styleConfigIndex);
 
       if (!nativeStyleConfig) {
-	 printf("jniDrawMap(): NULL StyleConfig pointer");
+	 printf("jniDrawMap(): NULL StyleConfig pointer\n");
 	 return JNI_FALSE;
       }
 
       MercatorProjection *nativeProjection = gProjectionArray->Get(projectionIndex);
 
       if (!nativeProjection) {
-	 printf("jniDrawMap(): NULL Projection pointer");
+	 printf("jniDrawMap(): NULL Projection pointer\n");
 	 return JNI_FALSE;
       }
 
       MapParameter *nativeMapParameter = gMapParameterArray->Get(mapParameterIndex);
 
       if (!nativeMapParameter) {
-	 printf("jniDrawMap(): NULL MapParameter pointer");
+	 printf("jniDrawMap(): NULL MapParameter pointer\n");
 	 return JNI_FALSE;
       }
-
-      printf("get data: %d\n", mapDataIndex);
 
       MapData *nativeMapData = gMapDataArray->Get(mapDataIndex);
 
       if (!nativeMapData) {
-	 printf("jniDrawMap(): NULL MapData pointer");
+	 printf("jniDrawMap(): NULL MapData pointer\n");
 	 return JNI_FALSE;
       }
 
@@ -1240,9 +566,9 @@ extern "C" {
 	    *nativeMapParameter, *nativeMapData, env, object);
 
       if (result) {
-	 printf("jniDrawMap(): DrawMap() Ok!");
+	 printf("jniDrawMap(): DrawMap() Ok!\n");
       } else {
-	 printf("jniDrawMap(): DrawMap() failed!");
+	 printf("jniDrawMap(): DrawMap() failed!\n");
       }
 
       return result;

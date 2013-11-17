@@ -21,10 +21,11 @@
  */
 
 #include <osmscout/MapPainter.h>
+#include <osmscout/util/Transformation.h>
 
 namespace osmscout {
 
-   class MapPainterCanvas : public osmscout::MapPainter {
+   class MapPainterCanvas {
 
    private:
 
@@ -61,63 +62,33 @@ namespace osmscout {
       int
       GetColorInt(Color color);
       CoordBufferImpl<Vertex2D> *coordBuffer;
+
+      /**
+       Scratch variables for path optimization algorithm
+       */
+      TransBuffer transBuffer; //! Static (avoid reallocation) buffer of transformed coordinates
+
+      struct OSMSCOUT_API PolyData
+      {
+	 size_t transStart; //! Start of coordinates in transformation buffer
+	 size_t transEnd; //! End of coordinates in transformation buffer
+      };
+      size_t waysSegments;
+      size_t waysDrawn;
+
+      size_t areasSegments;
+      size_t areasDrawn;
+
+      size_t nodesDrawn;
+
    private:
 
       void
       initKeys(const StyleConfig& styleConfig);
 
-      void
-      DrawPrimitivePath(const Projection& projection, const MapParameter& parameter,
-	    const DrawPrimitiveRef& primitive, double x, double y, double minX, double minY,
-	    double maxX, double maxY);
-
-      void
-      DrawPrimitivePath(const Projection& projection, const MapParameter& parameter,
-	    const DrawPrimitiveRef& primitive, double x, double y, double minX, double minY,
-	    double maxX, double maxY, double* onPathX, double* onPathY, double* segmentLengths);
-
-      void
-      DrawFillStyle(const Projection& projection, const MapParameter& parameter,
-	    const FillStyle& fill);
-
-      void
-      SetPolygonFillPath(float* x, float* y, int numPoints);
-
-      void
-      MapPathOnPath(float* arrayX, float* arrayY, int numPoints, double* onPathX, double* onPathY,
-	    double* segmentLengths);
 
    protected:
 
-      bool
-      HasIcon(const StyleConfig& styleConfig, const MapParameter& parameter, IconStyle& style);
-
-      bool
-      HasPattern(const MapParameter& parameter, const FillStyle& style);
-
-      void
-      GetTextDimension(const MapParameter& parameter, double fontSize, const std::string& text,
-	    double& xOff, double& yOff, double& width, double& height);
-
-      void
-      DrawLabel(const Projection& projection, const MapParameter& parameter,
-	    const LabelData& label);
-
-      void
-      DrawContourLabel(const Projection& projection, const MapParameter& parameter,
-	    const PathTextStyle& style, const std::string& text, size_t transStart,
-	    size_t transEnd);
-
-      void
-      DrawSymbol(const Projection& projection, const MapParameter& parameter, const Symbol& symbol,
-	    double x, double y);
-
-      void
-      DrawContourSymbol(const Projection& projection, const MapParameter& parameter,
-	    const Symbol& symbol, double space, size_t transStart, size_t transEnd);
-
-      void
-      DrawIcon(const IconStyle* style, double x, double y);
 
       void
       DrawPath(const Projection& projection, const MapParameter& parameter, const Color& color,
@@ -125,17 +96,8 @@ namespace osmscout {
 	    LineStyle::CapStyle endCap, size_t transStart, size_t transEnd);
 
       void
-      DrawArea(const Projection& projection, const MapParameter& parameter, const AreaData& area);
-
-      void
-      DrawArea(const std::vector<PolyData>& data, const AreaRef& area, size_t outerId, size_t ringId);
-
-//    void DrawArea(const FillStyle& style,
-//                  const MapParameter& parameter,
-//                  double x,
-//                  double y,
-//                  double width,
-//                  double height);
+      DrawArea(const std::vector<PolyData>& data, const AreaRef& area, size_t outerId,
+	    size_t ringId);
 
       void
       DrawGround(const Projection& projection, const MapParameter& parameter,
@@ -149,14 +111,13 @@ namespace osmscout {
       PrepareAreas(const StyleConfig& styleConfig, const Projection& projection,
 	    const MapParameter& parameter, const MapData& data);
 
-
       void
       PrepareWays(const StyleConfig& styleConfig, const Projection& projection,
 	    const MapParameter& parameter, const MapData& data);
 
-//      void
-//      DrawWays(const StyleConfig& styleConfig, const Projection& projection,
-//	    const MapParameter& parameter, const MapData& data);
+      bool IsVisible(const Projection& projection,
+                                    const std::vector<GeoCoord>& nodes,
+                                    double pixelOffset) const;
 
    public:
       MapPainterCanvas(JNIEnv *env);

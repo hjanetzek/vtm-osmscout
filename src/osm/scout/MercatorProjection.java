@@ -19,8 +19,6 @@
 
 package osm.scout;
 
-import org.oscim.core.Point;
-
 public class MercatorProjection extends Projection {
 
 	private int mJniProjectionIndex;
@@ -76,9 +74,9 @@ public class MercatorProjection extends Projection {
 		return jniPixelToGeo(mJniProjectionIndex, x, y);
 	}
 
-	public Point geoToPixel(double lon, double lat) {
-		return jniGeoToPixel(mJniProjectionIndex, lon, lat);
-	}
+	// public Point geoToPixel(double lon, double lat) {
+	// return jniGeoToPixel(mJniProjectionIndex, lon, lat);
+	// }
 
 	public GeoBox getBoundaries() {
 
@@ -109,6 +107,6 @@ public class MercatorProjection extends Projection {
 	protected native GeoPos jniPixelToGeo(int jniProjectionIndex,
 	                                      double x, double y);
 
-	protected native Point jniGeoToPixel(int jniProjectionIndex,
-	                                     double lon, double lat);
+	// protected native Point jniGeoToPixel(int jniProjectionIndex,
+	// double lon, double lat);
 }

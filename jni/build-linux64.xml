@@ -64,15 +64,15 @@
 		<include name="libosmscout/libosmscout-map/src/osmscout/StyleConfigLoader.cpp"/>
 		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Parser.cpp"/>
 		<include name="libosmscout/libosmscout-map/src/osmscout/oss/Scanner.cpp"/>
-		<include name="libosmscout-jni/jniDatabase.cpp"/>
-		<include name="libosmscout-jni/jniMapData.cpp"/>
-		<include name="libosmscout-jni/jniMapPainterCanvas.cpp"/>
-		<include name="libosmscout-jni/jniMapParameter.cpp"/>
-		<include name="libosmscout-jni/jniMercatorProjection.cpp"/>
-		<include name="libosmscout-jni/jniObjectTypeSets.cpp"/>
-		<include name="libosmscout-jni/jniOnLoad.cpp"/>
-		<include name="libosmscout-jni/jniStyleConfig.cpp"/>
-		<include name="libosmscout-jni/jniTypeConfig.cpp"/>
+		<include name="osmscout/jniDatabase.cpp"/>
+		<include name="osmscout/jniMapData.cpp"/>
+		<include name="osmscout/jniTileSource.cpp"/>
+		<include name="osmscout/jniMapParameter.cpp"/>
+		<include name="osmscout/jniMercatorProjection.cpp"/>
+		<include name="osmscout/jniObjectTypeSets.cpp"/>
+		<include name="osmscout/jniOnLoad.cpp"/>
+		<include name="osmscout/jniStyleConfig.cpp"/>
+		<include name="osmscout/jniTypeConfig.cpp"/>
 
 				<exclude name="libosmscout/Demos/**"/>
 		<exclude name="libosmscout/TravelJinni/**"/>

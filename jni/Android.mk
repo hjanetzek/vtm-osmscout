@@ -43,14 +43,14 @@ LOCAL_SRC_FILES := libosmscout/libosmscout/src/osmscout/ost/Scanner.cpp\
 	libosmscout/libosmscout-map/src/osmscout/oss/Scanner.cpp\
 	libosmscout/libosmscout-map/src/osmscout/oss/Parser.cpp\
 	libosmscout/libosmscout-map/src/osmscout/StyleConfigLoader.cpp\
-	libosmscout-jni/jniTypeConfig.cpp\
-	libosmscout-jni/jniMercatorProjection.cpp\
-	libosmscout-jni/jniStyleConfig.cpp\
-	libosmscout-jni/jniObjectTypeSets.cpp\
-	libosmscout-jni/jniMapData.cpp\
-	libosmscout-jni/jniMapPainterCanvas.cpp\
-	libosmscout-jni/jniDatabase.cpp\
-	libosmscout-jni/jniMapParameter.cpp\
-	libosmscout-jni/jniOnLoad.cpp
+	osmscout/jniTypeConfig.cpp\
+	osmscout/jniMercatorProjection.cpp\
+	osmscout/jniStyleConfig.cpp\
+	osmscout/jniObjectTypeSets.cpp\
+	osmscout/jniMapData.cpp\
+	osmscout/jniTileSource.cpp\
+	osmscout/jniDatabase.cpp\
+	osmscout/jniMapParameter.cpp\
+	osmscout/jniOnLoad.cpp
  
 include $(BUILD_SHARED_LIBRARY)

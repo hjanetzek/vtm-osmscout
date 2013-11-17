@@ -24,7 +24,7 @@
 #include <osmscout/util/Projection.h>
 #include <osmscout/StyleConfig.h>
 
-#include <jniMapPainterCanvas.h>
+#include <jniTileSource.h>
 #include <jniObjectArray.h>
 #include <jniObjectTypeSets.h>
 
@@ -33,7 +33,7 @@ using namespace osmscout;
 // Global Object Arrays
 JniObjectArray<Database> *gDatabaseArray;
 JniObjectArray<MapData> *gMapDataArray;
-JniObjectArray<MapPainterCanvas> *gMapPainterArray;
+JniObjectArray<TileSource> *gMapPainterArray;
 JniObjectArray<MapParameter> *gMapParameterArray;
 JniObjectArray<MercatorProjection> *gProjectionArray;
 JniObjectArray<ObjectTypeSets> *gObjectTypeSetsArray;
@@ -44,7 +44,7 @@ JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *vm, void *reserved) {
    gDatabaseArray = new JniObjectArray<Database>();
    gMapDataArray = new JniObjectArray<MapData>();
-   gMapPainterArray = new JniObjectArray<MapPainterCanvas>();
+   gMapPainterArray = new JniObjectArray<TileSource>();
    gMapParameterArray = new JniObjectArray<MapParameter>();
    gProjectionArray = new JniObjectArray<MercatorProjection>();
    gObjectTypeSetsArray = new JniObjectArray<ObjectTypeSets>();

@@ -25,7 +25,7 @@
 
 namespace osmscout {
 
-   class MapPainterCanvas {
+   class TileSource {
 
    private:
 
@@ -120,9 +120,9 @@ namespace osmscout {
                                     double pixelOffset) const;
 
    public:
-      MapPainterCanvas(JNIEnv *env);
+      TileSource(JNIEnv *env);
       virtual
-      ~MapPainterCanvas();
+      ~TileSource();
 
       bool
       DrawMap(const StyleConfig& styleConfig, const Projection& projection,

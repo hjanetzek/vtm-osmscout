@@ -26,35 +26,31 @@
 #include <osmscout/Node.h>
 #include <osmscout/MapPainter.h>
 
-#include <jniMapPainterCanvas.h>
+#include <jniTileSource.h>
 #include <jniObjectArray.h>
 
 #ifdef __ANDROID__
 #include <android/log.h>
-#define DEBUG_TAG "OsmScoutJni:MapPainterCanvas"
+#define DEBUG_TAG "OsmScoutJni:TileSource"
 #define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
 #endif
 
 using namespace osmscout;
 
 extern JniObjectArray<MapData> *gMapDataArray;
-extern JniObjectArray<MapPainterCanvas> *gMapPainterArray;
+extern JniObjectArray<TileSource> *gMapPainterArray;
 extern JniObjectArray<MapParameter> *gMapParameterArray;
 extern JniObjectArray<MercatorProjection> *gProjectionArray;
 extern JniObjectArray<StyleConfig> *gStyleConfigArray;
 
 namespace osmscout {
 
-   MapPainterCanvas::MapPainterCanvas(JNIEnv *env)
-   :
-	 coordBuffer(new CoordBufferImpl<Vertex2D>()),
+   TileSource::TileSource(JNIEnv *env)
+   : coordBuffer(new CoordBufferImpl<Vertex2D>()),
 	       transBuffer(coordBuffer) {
 
-      //:MapPainter(new CoordBufferImpl<Vertex2D>()),
-      //coordBuffer((CoordBufferImpl<Vertex2D>*) transBuffer.buffer) {
-
-      coordBuffer = new CoordBufferImpl<Vertex2D>();
-      transBuffer.buffer = coordBuffer;
+      //coordBuffer = new CoordBufferImpl<Vertex2D>();
+      //transBuffer.buffer = coordBuffer;
 
       mJniEnv = env;
       jclass c = mJniEnv->FindClass("org/oscim/core/MapElement");
@@ -66,10 +62,10 @@ namespace osmscout {
 
       mGetPoints = mJniEnv->GetMethodID(c, "ensurePointSize", "(I)[F");
       mGetIndices = mJniEnv->GetMethodID(c, "ensureIndexSize", "(I)[S");
-      mAddTag = mJniEnv->GetMethodID(c, "addTag", "(Ljava/lang/String;Ljava/lang/String;)V");
       mAddTag2 = mJniEnv->GetMethodID(c, "addTag", "(Lorg/oscim/core/Tag;)V");
+      mAddTag = mJniEnv->GetMethodID(c, "addTag", "(Ljava/lang/String;Ljava/lang/String;)V");
 
-      c = mJniEnv->FindClass("osm/scout/MapPainterCanvas");
+      c = mJniEnv->FindClass("org/oscim/osmscout/TileDataSource");
       mProcessArea = mJniEnv->GetMethodID(c, "processArea", "(Lorg/oscim/core/MapElement;)V");
       mProcessPath = mJniEnv->GetMethodID(c, "processPath", "(Lorg/oscim/core/MapElement;)V");
 
@@ -78,7 +74,7 @@ namespace osmscout {
       mNewTag = mJniEnv->GetMethodID(c, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
    }
 
-   MapPainterCanvas::~MapPainterCanvas() {
+   TileSource::~TileSource() {
       mJniEnv->DeleteGlobalRef(mMapElement);
       mJniEnv->DeleteGlobalRef(mMapElementClass);
       mJniEnv->DeleteGlobalRef(mTagClass);
@@ -97,103 +93,9 @@ namespace osmscout {
       printf("< cleared >");
    }
 
-   bool
-   MapPainterCanvas::DrawMap(const StyleConfig& styleConfig, const Projection& projection,
-	 const MapParameter& parameter, const MapData& data, JNIEnv *env, jobject object) {
-      mJniEnv = env;
-      mPainterClass = env->FindClass("osm/scout/MapPainterCanvas");
-      mPainterObject = object;
-
-      mMinimumLineWidth = parameter.GetLineMinWidthPixel() * 25.4 / parameter.GetDPI();
-
-      if (mTagKeys.size() == 0) initKeys(styleConfig);
-
-      return Draw(styleConfig, projection, parameter, data);
-   }
 
    void
-   MapPainterCanvas::initKeys(const StyleConfig& styleConfig) {
-      jclass c = mJniEnv->FindClass("java/lang/String");
-
-      jmethodID internalize = mJniEnv->GetMethodID(c, "intern", "()Ljava/lang/String;");
-      jmethodID makeTag = mJniEnv->GetStaticMethodID(mPainterClass, "makeTag",
-	    "(Ljava/lang/String;)Lorg/oscim/core/Tag;");
-
-      for (std::vector<TypeInfo>::const_iterator tags =
-	    styleConfig.GetTypeConfig()->GetTypes().begin();
-	    tags != styleConfig.GetTypeConfig()->GetTypes().end(); tags++) {
-	 const TypeInfo tag = *tags;
-	 std::string s = tag.GetName();
-
-	 jstring tagstring = mJniEnv->NewStringUTF(s.c_str());
-	 jobject jtag = mJniEnv->CallStaticObjectMethod(mPainterClass, makeTag, tagstring);
-
-	 mTags.push_back(mJniEnv->NewGlobalRef(jtag));
-
-	 mJniEnv->DeleteLocalRef(jtag);
-	 mJniEnv->DeleteLocalRef(tagstring);
-
-	 // printf("tags >> %s \n", s.c_str());
-      }
-
-      for (std::vector<TagInfo>::const_iterator tags =
-	    styleConfig.GetTypeConfig()->GetTags().begin();
-	    tags != styleConfig.GetTypeConfig()->GetTags().end(); tags++) {
-	 const TagInfo tag = *tags;
-	 std::string s = tag.GetName();
-
-	 jstring js = mJniEnv->NewStringUTF(s.c_str());
-	 jobject internal = mJniEnv->CallObjectMethod(js, internalize);
-
-	 mTagKeys.push_back(reinterpret_cast<jstring>(mJniEnv->NewGlobalRef(internal)));
-
-	 mJniEnv->DeleteLocalRef(js);
-	 mJniEnv->DeleteLocalRef(internal);
-
-	 //printf("keys >> %s \n", s.c_str());
-      }
-   }
-
-   bool
-   MapPainterCanvas::Draw(const StyleConfig& styleConfig, const Projection& projection,
-	 const MapParameter& parameter, const MapData& data) {
-
-      waysSegments = 0;
-      waysDrawn = 0;
-
-      areasSegments = 0;
-      areasDrawn = 0;
-
-      nodesDrawn = 0;
-
-      transBuffer.Reset();
-
-      if (parameter.IsAborted()) {
-	 return false;
-      }
-
-      if (parameter.IsDebugPerformance()) {
-	 std::cout << "Draw: [";
-	 std::cout << projection.GetLatMin() << ",";
-	 std::cout << projection.GetLonMin() << "-";
-	 std::cout << projection.GetLatMax() << ",";
-	 std::cout << projection.GetLonMax() << "] ";
-	 std::cout << projection.GetMagnification().GetMagnification() << "x" << "/"
-	       << projection.GetMagnification().GetLevel() << " ";
-	 std::cout << projection.GetWidth() << "x" << projection.GetHeight() << " "
-	       << parameter.GetDPI() << " DPI" << std::endl;
-      }
-
-      PrepareAreas(styleConfig, projection, parameter, data);
-
-      PrepareWays(styleConfig, projection, parameter, data);
-
-      printf("ways drawn %d, areas drawn %d", (int) waysDrawn, (int) areasDrawn);
-      return true;
-   }
-
-   void
-   MapPainterCanvas::PrepareAreas(const StyleConfig& styleConfig, const Projection& projection,
+   TileSource::PrepareAreas(const StyleConfig& styleConfig, const Projection& projection,
 	 const MapParameter& parameter, const MapData& data) {
       //areaData.clear();
 
@@ -257,7 +159,7 @@ namespace osmscout {
    }
 
    bool
-   MapPainterCanvas::IsVisible(const Projection& projection,
+   TileSource::IsVisible(const Projection& projection,
 	 const std::vector<GeoCoord>& nodes,
 	 double pixelOffset) const
 	 {
@@ -314,7 +216,7 @@ namespace osmscout {
 	    yMax < 0);
    }
    void
-   MapPainterCanvas::DrawArea(const std::vector<PolyData>& data, const AreaRef& area,
+   TileSource::DrawArea(const std::vector<PolyData>& data, const AreaRef& area,
 	 size_t outerId, size_t ringId) {
       int allPoints = 0;
       int numRings = 2; // plus 1 to set end marker
@@ -413,7 +315,7 @@ namespace osmscout {
    }
 
    void
-   MapPainterCanvas::PrepareWays(const StyleConfig& styleConfig, const Projection& projection,
+   TileSource::PrepareWays(const StyleConfig& styleConfig, const Projection& projection,
 	 const MapParameter& parameter, const MapData& data) {
 
       size_t transStart = 0;
@@ -497,26 +399,125 @@ namespace osmscout {
    }
 
    void
-   MapPainterCanvas::DrawGround(const Projection& projection, const MapParameter& parameter,
+   TileSource::DrawGround(const Projection& projection, const MapParameter& parameter,
 	 const FillStyle& style) {
 
    }
+
+
+   bool
+    TileSource::DrawMap(const StyleConfig& styleConfig, const Projection& projection,
+ 	 const MapParameter& parameter, const MapData& data, JNIEnv *env, jobject object) {
+       mJniEnv = env;
+       mPainterClass = env->FindClass("org/oscim/osmscout/TileDataSource");
+       mPainterObject = object;
+
+       mMinimumLineWidth = parameter.GetLineMinWidthPixel() * 25.4 / parameter.GetDPI();
+
+       if (mTagKeys.size() == 0) initKeys(styleConfig);
+
+       return Draw(styleConfig, projection, parameter, data);
+    }
+
+    void
+    TileSource::initKeys(const StyleConfig& styleConfig) {
+       jclass c = mJniEnv->FindClass("java/lang/String");
+
+       jmethodID internalize = mJniEnv->GetMethodID(c, "intern", "()Ljava/lang/String;");
+       jmethodID makeTag = mJniEnv->GetStaticMethodID(mPainterClass, "makeTag",
+ 	    "(Ljava/lang/String;)Lorg/oscim/core/Tag;");
+
+       for (std::vector<TypeInfo>::const_iterator tags =
+ 	    styleConfig.GetTypeConfig()->GetTypes().begin();
+ 	    tags != styleConfig.GetTypeConfig()->GetTypes().end(); tags++) {
+ 	 const TypeInfo tag = *tags;
+ 	 std::string s = tag.GetName();
+
+ 	 jstring tagstring = mJniEnv->NewStringUTF(s.c_str());
+ 	 jobject jtag = mJniEnv->CallStaticObjectMethod(mPainterClass, makeTag, tagstring);
+
+ 	 mTags.push_back(mJniEnv->NewGlobalRef(jtag));
+
+ 	 mJniEnv->DeleteLocalRef(jtag);
+ 	 mJniEnv->DeleteLocalRef(tagstring);
+
+ 	 // printf("tags >> %s \n", s.c_str());
+       }
+
+       for (std::vector<TagInfo>::const_iterator tags =
+ 	    styleConfig.GetTypeConfig()->GetTags().begin();
+ 	    tags != styleConfig.GetTypeConfig()->GetTags().end(); tags++) {
+ 	 const TagInfo tag = *tags;
+ 	 std::string s = tag.GetName();
+
+ 	 jstring js = mJniEnv->NewStringUTF(s.c_str());
+ 	 jobject internal = mJniEnv->CallObjectMethod(js, internalize);
+
+ 	 mTagKeys.push_back(reinterpret_cast<jstring>(mJniEnv->NewGlobalRef(internal)));
+
+ 	 mJniEnv->DeleteLocalRef(js);
+ 	 mJniEnv->DeleteLocalRef(internal);
+
+ 	 //printf("keys >> %s \n", s.c_str());
+       }
+    }
+
+    bool
+    TileSource::Draw(const StyleConfig& styleConfig, const Projection& projection,
+ 	 const MapParameter& parameter, const MapData& data) {
+
+       waysSegments = 0;
+       waysDrawn = 0;
+
+       areasSegments = 0;
+       areasDrawn = 0;
+
+       nodesDrawn = 0;
+
+       transBuffer.Reset();
+
+       if (parameter.IsAborted()) {
+ 	 return false;
+       }
+
+       if (parameter.IsDebugPerformance()) {
+ 	 std::cout << "Draw: [";
+ 	 std::cout << projection.GetLatMin() << ",";
+ 	 std::cout << projection.GetLonMin() << "-";
+ 	 std::cout << projection.GetLatMax() << ",";
+ 	 std::cout << projection.GetLonMax() << "] ";
+ 	 std::cout << projection.GetMagnification().GetMagnification() << "x" << "/"
+ 	       << projection.GetMagnification().GetLevel() << " ";
+ 	 std::cout << projection.GetWidth() << "x" << projection.GetHeight() << " "
+ 	       << parameter.GetDPI() << " DPI" << std::endl;
+       }
+
+       PrepareAreas(styleConfig, projection, parameter, data);
+
+       PrepareWays(styleConfig, projection, parameter, data);
+
+       printf("ways drawn %d, areas drawn %d", (int) waysDrawn, (int) areasDrawn);
+       return true;
+    }
+
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#define JNI(X) JNIEXPORT Java_org_oscim_osmscout_TileDataSource_##X
+
    jint
-   Java_osm_scout_MapPainterCanvas_jniConstructor(JNIEnv *env, jobject object) {
-      MapPainterCanvas *nativeMapPainter = new MapPainterCanvas(env);
+   JNI(jniConstructor)(JNIEnv *env, jobject object) {
+      TileSource *nativeMapPainter = new TileSource(env);
 
       return gMapPainterArray->Add(nativeMapPainter);
    }
 
    void
-   Java_osm_scout_MapPainterCanvas_jniDestructor(JNIEnv *env, jobject object, int mapPainterIndex) {
-      MapPainterCanvas *nativeMapPainter = gMapPainterArray->GetAndRemove(mapPainterIndex);
+   JNI(jniDestructor)(JNIEnv *env, jobject object, int mapPainterIndex) {
+      TileSource *nativeMapPainter = gMapPainterArray->GetAndRemove(mapPainterIndex);
 
       if (!nativeMapPainter)
 	 printf("jniDestructor(): NULL object");
@@ -525,9 +526,9 @@ extern "C" {
    }
 
    jboolean
-   Java_osm_scout_MapPainterCanvas_jniDrawMap(JNIEnv *env, jobject object, int mapPainterIndex,
+   JNI(jniDrawMap)(JNIEnv *env, jobject object, int mapPainterIndex,
 	 int styleConfigIndex, int projectionIndex, int mapParameterIndex, int mapDataIndex) {
-      MapPainterCanvas *nativeMapPainter = gMapPainterArray->Get(mapPainterIndex);
+      TileSource *nativeMapPainter = gMapPainterArray->Get(mapPainterIndex);
 
       if (!nativeMapPainter) {
 	 printf("jniDrawMap(): NULL MapPainter object\n");

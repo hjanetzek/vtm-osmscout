@@ -15,44 +15,45 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
-*/
+ */
 
 package osm.scout;
 
 public class MapData {
 
 	private int mJniMapDataIndex;
-	
+
 	public MapData() {
-		
-		mJniMapDataIndex=jniConstructor();
+
+		mJniMapDataIndex = jniConstructor();
 	}
-	
+
 	public MapData(int jniMapDataIndex) {
-		
-		mJniMapDataIndex=jniMapDataIndex;
+
+		mJniMapDataIndex = jniMapDataIndex;
 	}
-	
-	public int numWays(){
+
+	public int numWays() {
 		return jniGetWays(mJniMapDataIndex);
 	}
-	
+
 	protected void finalize() throws Throwable {
-		
-		try {			
+
+		try {
 			jniDestructor(mJniMapDataIndex);
-		}
-		finally {			
+		} finally {
 			super.finalize();
 		}
 	}
-	
-	int getJniObjectIndex() {
+
+	public int getJniObjectIndex() {
 		return mJniMapDataIndex;
 	}
-	
+
 	// Native methods
 	private native int jniConstructor();
+
 	private native void jniDestructor(int jniObjectTypeSetsIndex);
+
 	private native int jniGetWays(int jniObjectTypeSetsIndex);
 }

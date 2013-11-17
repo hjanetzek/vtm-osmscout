@@ -39,15 +39,15 @@ public class OsmscoutBuilder {
 	        "libosmscout/libosmscout-map/src/osmscout/StyleConfigLoader.cpp",
 	        "libosmscout/libosmscout-map/src/osmscout/oss/Parser.cpp",
 	        "libosmscout/libosmscout-map/src/osmscout/oss/Scanner.cpp",
-	        "libosmscout-jni/jniDatabase.cpp",
-	        "libosmscout-jni/jniMapData.cpp",
-	        "libosmscout-jni/jniMapPainterCanvas.cpp",
-	        "libosmscout-jni/jniMapParameter.cpp",
-	        "libosmscout-jni/jniMercatorProjection.cpp",
-	        "libosmscout-jni/jniObjectTypeSets.cpp",
-	        "libosmscout-jni/jniOnLoad.cpp",
-	        "libosmscout-jni/jniStyleConfig.cpp",
-	        "libosmscout-jni/jniTypeConfig.cpp"
+	        "osmscout/jniDatabase.cpp",
+	        "osmscout/jniMapData.cpp",
+	        "osmscout/jniTileSource.cpp",
+	        "osmscout/jniMapParameter.cpp",
+	        "osmscout/jniMercatorProjection.cpp",
+	        "osmscout/jniObjectTypeSets.cpp",
+	        "osmscout/jniOnLoad.cpp",
+	        "osmscout/jniStyleConfig.cpp",
+	        "osmscout/jniTypeConfig.cpp"
 	};
 
 	static String[] excludeCpp = {

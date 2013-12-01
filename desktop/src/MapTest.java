@@ -1,5 +1,4 @@
 
-
 import org.oscim.gdx.GdxMap;
 import org.oscim.gdx.GdxMapApp;
 import org.oscim.layers.tile.vector.VectorTileLayer;
@@ -22,10 +21,6 @@ public class MapTest extends GdxMap {
 		MapRenderer.setBackgroundColor(0xff888888);
 
 		mMap.setMapPosition(53.072, 8.80, 1 << 15);
-		// mMap.setMapPosition(52.5, 13.3, 1 << 15);
-
-		// MapFileTileSource tileSource = new MapFileTileSource();
-		// tileSource.setMapFile("/home/jeff/germany.map");
 
 		TileSource tileSource = new OsmScoutTileSource();
 		tileSource.setOption("file", "/home/src/libosmscout/bremen");

@@ -1,3 +1,4 @@
 [submodule "jni/libosmscout"]
 	path = jni/libosmscout
 	url = git://git.code.sf.net/p/libosmscout/code
+	branch = master

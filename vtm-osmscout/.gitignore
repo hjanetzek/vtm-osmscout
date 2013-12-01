@@ -1,0 +1,4 @@
+/bin
+/obj/*
+/jni/target/*
+/jni/jni-headers/*

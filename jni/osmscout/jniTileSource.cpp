@@ -45,29 +45,21 @@ extern JniObjectArray<StyleConfig> *gStyleConfigArray;
 
 namespace osmscout {
 
-   TileSource::TileSource(JNIEnv *env)
+   TileSource::TileSource(JNIEnv *env, jobject object)
    : coordBuffer(new CoordBufferImpl<Vertex2D>()),
 	       transBuffer(coordBuffer) {
 
-      //coordBuffer = new CoordBufferImpl<Vertex2D>();
-      //transBuffer.buffer = coordBuffer;
-
       mJniEnv = env;
-      jclass c = mJniEnv->FindClass("org/oscim/core/MapElement");
-      jmethodID rectMethodId = mJniEnv->GetMethodID(c, "<init>", "(II)V");
 
-      mMapElement = mJniEnv->NewObject(c, rectMethodId, (jint) 1024, (jint) 32);
-      mMapElement = mJniEnv->NewGlobalRef(mMapElement);
-      mMapElementClass = reinterpret_cast<jclass>(mJniEnv->NewGlobalRef(c));
+      jclass c = mJniEnv->FindClass("org/oscim/osmscout/TileDataSource");
+      mProcessArea = mJniEnv->GetMethodID(c, "processArea", "()V");
+      mProcessPath = mJniEnv->GetMethodID(c, "processPath", "()V");
+
+      mAddTag = mJniEnv->GetMethodID(c, "addTag", "(Ljava/lang/String;Ljava/lang/String;)V");
+      mAddTag2 = mJniEnv->GetMethodID(c, "addTag", "(Lorg/oscim/core/Tag;)V");
 
       mGetPoints = mJniEnv->GetMethodID(c, "ensurePointSize", "(I)[F");
       mGetIndices = mJniEnv->GetMethodID(c, "ensureIndexSize", "(I)[S");
-      mAddTag2 = mJniEnv->GetMethodID(c, "addTag", "(Lorg/oscim/core/Tag;)V");
-      mAddTag = mJniEnv->GetMethodID(c, "addTag", "(Ljava/lang/String;Ljava/lang/String;)V");
-
-      c = mJniEnv->FindClass("org/oscim/osmscout/TileDataSource");
-      mProcessArea = mJniEnv->GetMethodID(c, "processArea", "(Lorg/oscim/core/MapElement;)V");
-      mProcessPath = mJniEnv->GetMethodID(c, "processPath", "(Lorg/oscim/core/MapElement;)V");
 
       c = mJniEnv->FindClass("org/oscim/core/Tag");
       mTagClass = reinterpret_cast<jclass>(mJniEnv->NewGlobalRef(c));
@@ -75,8 +67,8 @@ namespace osmscout {
    }
 
    TileSource::~TileSource() {
-      mJniEnv->DeleteGlobalRef(mMapElement);
-      mJniEnv->DeleteGlobalRef(mMapElementClass);
+      //mJniEnv->DeleteGlobalRef(mMapElement);
+      //mJniEnv->DeleteGlobalRef(mMapElementClass);
       mJniEnv->DeleteGlobalRef(mTagClass);
 
       for (std::vector<jstring>::const_iterator it = mTagKeys.begin(); it != mTagKeys.end(); it++) {
@@ -236,7 +228,7 @@ namespace osmscout {
       allPoints += numPoints;
 
       unsigned char isCopy = 0;
-      jobject obj_points = mJniEnv->CallObjectMethod(mMapElement, mGetPoints, (jint) allPoints);
+      jobject obj_points = mJniEnv->CallObjectMethod(mTileSourceObject, mGetPoints, (jint) allPoints);
       jfloatArray arr_points = reinterpret_cast<jfloatArray>(obj_points);
 
       float *points = (float*) mJniEnv->GetPrimitiveArrayCritical(arr_points, &isCopy);
@@ -244,7 +236,7 @@ namespace osmscout {
 	 return;
       }
 
-      jobject obj_indices = mJniEnv->CallObjectMethod(mMapElement, mGetIndices, (jint) numRings);
+      jobject obj_indices = mJniEnv->CallObjectMethod(mTileSourceObject, mGetIndices, (jint) numRings);
       jshortArray arr_indices = reinterpret_cast<jshortArray>(obj_indices);
 
       short *indices = (short*) mJniEnv->GetPrimitiveArrayCritical(arr_indices, &isCopy);
@@ -300,17 +292,17 @@ namespace osmscout {
       const std::vector<Tag>& tags = area->rings[outerId].attributes.GetTags();
 
       if (id >= 0 && id < mTags.size())
-	 mJniEnv->CallVoidMethod(mMapElement, mAddTag2, mTags[id]);
+	 mJniEnv->CallVoidMethod(mTileSourceObject, mAddTag2, mTags[id]);
 
       for (int i = 0, n = tags.size(); i < n; i++) {
 	 const Tag& tag = tags[i];
 	 //printf("add tag %d %d %s\n", n, tag.key, tag.value.c_str());
 	 jstring value = mJniEnv->NewStringUTF(tag.value.c_str());
-	 mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[tag.key], value);
+	 mJniEnv->CallVoidMethod(mTileSourceObject, mAddTag, mTagKeys[tag.key], value);
 	 mJniEnv->DeleteLocalRef(value);
       }
 
-      mJniEnv->CallVoidMethod(mPainterObject, mProcessArea, mMapElement);
+      mJniEnv->CallVoidMethod(mTileSourceObject, mProcessArea);
 
    }
 
@@ -339,7 +331,7 @@ namespace osmscout {
 	 int numPoints = transEnd - transStart + 1;
 
 	 unsigned char isCopy = 0;
-	 jobject obj_points = mJniEnv->CallObjectMethod(mMapElement, mGetPoints, (jint) numPoints);
+	 jobject obj_points = mJniEnv->CallObjectMethod(mTileSourceObject, mGetPoints, (jint) numPoints);
 	 jfloatArray arr_points = reinterpret_cast<jfloatArray>(obj_points);
 
 	 float *points = (float*) mJniEnv->GetPrimitiveArrayCritical(arr_points, &isCopy);
@@ -347,7 +339,7 @@ namespace osmscout {
 	    return;
 	 }
 
-	 jobject obj_indices = mJniEnv->CallObjectMethod(mMapElement, mGetIndices, (jint) 1);
+	 jobject obj_indices = mJniEnv->CallObjectMethod(mTileSourceObject, mGetIndices, (jint) 1);
 	 jshortArray arr_indices = reinterpret_cast<jshortArray>(obj_indices);
 
 	 short *indices = (short*) mJniEnv->GetPrimitiveArrayCritical(arr_indices, &isCopy);
@@ -374,13 +366,13 @@ namespace osmscout {
 	 const TypeId id = way->GetType();
 
 	 if (id >= 0 && id < mTags.size())
-	    mJniEnv->CallVoidMethod(mMapElement, mAddTag2, mTags[id]);
+	    mJniEnv->CallVoidMethod(mTileSourceObject, mAddTag2, mTags[id]);
 
 	 const std::string& name = way->GetName();
 	 if (name.length() > 0) {
 	    //printf("add name %s\n", name.c_str());
 	    jstring value = mJniEnv->NewStringUTF(name.c_str());
-	    mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[1], value);
+	    mJniEnv->CallVoidMethod(mTileSourceObject, mAddTag, mTagKeys[1], value);
 	    mJniEnv->DeleteLocalRef(value);
 	 }
 
@@ -389,11 +381,11 @@ namespace osmscout {
 
 	    //printf("add tag %d %d %s\n", n, tag.key, tag.value.c_str());
 	    jstring value = mJniEnv->NewStringUTF(tag.value.c_str());
-	    mJniEnv->CallVoidMethod(mMapElement, mAddTag, mTagKeys[tag.key], value);
+	    mJniEnv->CallVoidMethod(mTileSourceObject, mAddTag, mTagKeys[tag.key], value);
 	    mJniEnv->DeleteLocalRef(value);
 	 }
 
-	 mJniEnv->CallVoidMethod(mPainterObject, mProcessPath, mMapElement);
+	 mJniEnv->CallVoidMethod(mTileSourceObject, mProcessPath);
 
       }
    }
@@ -410,7 +402,7 @@ namespace osmscout {
  	 const MapParameter& parameter, const MapData& data, JNIEnv *env, jobject object) {
        mJniEnv = env;
        mPainterClass = env->FindClass("org/oscim/osmscout/TileDataSource");
-       mPainterObject = object;
+       mTileSourceObject = object;
 
        mMinimumLineWidth = parameter.GetLineMinWidthPixel() * 25.4 / parameter.GetDPI();
 
@@ -510,7 +502,7 @@ extern "C" {
 
    jint
    JNI(jniConstructor)(JNIEnv *env, jobject object) {
-      TileSource *nativeMapPainter = new TileSource(env);
+      TileSource *nativeMapPainter = new TileSource(env, object);
 
       return gMapPainterArray->Add(nativeMapPainter);
    }

@@ -13,7 +13,7 @@
 	
 	<target name="pack-natives">
 		<jar destfile="../libs/osmscout-natives.jar">
-			<fileset dir="../libs/linux64" includes="libosmscout.so"/>
+			<fileset dir="../libs/linux64" includes="libosmscout64.so"/>
 
 		</jar>
 	</target>

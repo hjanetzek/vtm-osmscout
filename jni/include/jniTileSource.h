@@ -31,10 +31,10 @@ namespace osmscout {
 
       JNIEnv *mJniEnv;
       jclass mPainterClass;
-      jobject mPainterObject;
+      jobject mTileSourceObject;
 
-      jobject mMapElement;
-      jclass mMapElementClass;
+      //jobject mMapElement;
+      //jclass mMapElementClass;
 
       jclass mTagClass;
 
@@ -120,7 +120,7 @@ namespace osmscout {
                                     double pixelOffset) const;
 
    public:
-      TileSource(JNIEnv *env);
+      TileSource(JNIEnv *env, jobject object);
       virtual
       ~TileSource();
 

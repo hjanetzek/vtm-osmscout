@@ -19,9 +19,9 @@ import org.oscim.core.MapElement;
 import org.oscim.core.MercatorProjection;
 import org.oscim.core.Tag;
 import org.oscim.core.Tile;
-import org.oscim.layers.tile.MapTile;
-import org.oscim.tilesource.ITileDataSink;
-import org.oscim.tilesource.ITileDataSource;
+import org.oscim.tiling.MapTile;
+import org.oscim.tiling.source.ITileDataSink;
+import org.oscim.tiling.source.ITileDataSource;
 import org.oscim.utils.TileClipper;
 
 import osm.scout.Database;
@@ -57,9 +57,7 @@ public class TileDataSource implements ITileDataSource {
 		mStyleConfig = styleConfig;
 
 		mProjection = new osm.scout.MercatorProjection();
-
 		mMapElement = new MapElement(1024, 32);
-
 		mJniRef = jniConstructor();
 	}
 
@@ -118,30 +116,49 @@ public class TileDataSource implements ITileDataSource {
 
 	}
 
-	public void processArea(MapElement elem) {
+	public void processArea() {
 		if (mSink == null)
 			return;
 
-		elem.type = GeometryType.POLY;
+		MapElement e = mMapElement;
 
-		if (mTileClipper.clip(elem))
-			mSink.process(elem);
+		e.type = GeometryType.POLY;
 
-		elem.clear();
-		elem.tags.clear();
+		if (mTileClipper.clip(e))
+			mSink.process(e);
+
+		e.clear();
+		e.tags.clear();
 	}
 
-	public void processPath(MapElement elem) {
+	public void processPath() {
 		if (mSink == null)
 			return;
+		MapElement e = mMapElement;
 
-		elem.type = GeometryType.LINE;
+		e.type = GeometryType.LINE;
 
-		if (mTileClipper.clip(elem))
-			mSink.process(elem);
+		if (mTileClipper.clip(e))
+			mSink.process(e);
 
-		elem.clear();
-		elem.tags.clear();
+		e.clear();
+		e.tags.clear();
+	}
+
+	public void addTag(String key, String value) {
+		mMapElement.tags.add(new Tag(key, value));
+	}
+
+	public void addTag(Tag tag) {
+		mMapElement.tags.add(tag);
+	}
+
+	public short[] ensureIndexSize(int size) {
+		return mMapElement.ensureIndexSize(size, false);
+	}
+
+	public float[] ensurePointSize(int size) {
+		return mMapElement.ensurePointSize(size, false);
 	}
 
 	public static Tag makeTag(String s) {
@@ -154,9 +171,9 @@ public class TileDataSource implements ITileDataSource {
 
 	private native int jniConstructor();
 
-	private native void jniDestructor(int mapPainterIndex);
+	private native void jniDestructor(int tileSourceIndex);
 
-	private native boolean jniDrawMap(int mapPainterIndex,
+	private native boolean jniDrawMap(int tileSourceIndex,
 	                                  int styleConfigIndex,
 	                                  int projectionIndex,
 	                                  int mapParameter,

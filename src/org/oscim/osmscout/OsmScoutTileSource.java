@@ -15,11 +15,8 @@
 
 package org.oscim.osmscout;
 
-import org.oscim.core.BoundingBox;
-import org.oscim.core.GeoPoint;
-import org.oscim.tilesource.ITileDataSource;
-import org.oscim.tilesource.MapInfo;
-import org.oscim.tilesource.TileSource;
+import org.oscim.tiling.source.ITileDataSource;
+import org.oscim.tiling.source.TileSource;
 
 import osm.scout.Database;
 import osm.scout.MapParameter;
@@ -69,15 +66,4 @@ public class OsmScoutTileSource extends TileSource {
 	@Override
 	public void close() {
 	}
-
-	private static final MapInfo mMapInfo =
-	        new MapInfo(new BoundingBox(-180, -90, 180, 90),
-	                    new Byte((byte) 4), new GeoPoint(53.11, 8.85),
-	                    null, 0, 0, 0, "de", "comment", "author", null);
-
-	@Override
-	public MapInfo getMapInfo() {
-		return mMapInfo;
-	}
-
 }

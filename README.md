@@ -4,7 +4,7 @@ vtm-osmscout
 vtm tilesource for libosmscout offline maps.
 
 depends on library project:
-https://github.com/opensciencemap/vtm-android
+https://github.com/hjanetzek/vtm
 
 ### build JNI
  

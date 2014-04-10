@@ -6,7 +6,7 @@
 	</target>
 	
 	<target name="compile-natives">
-		<ant antfile="build-android32.xml"/>
+	<ant antfile="build-android32.xml"/>
 		<ant antfile="build-linux64.xml"/>
 
 	</target>

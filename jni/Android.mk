@@ -29,10 +29,11 @@ LOCAL_SRC_FILES := libosmscout/libosmscout/src/osmscout/ost/Scanner.cpp\
 	libosmscout/libosmscout/src/osmscout/Way.cpp\
 	libosmscout/libosmscout/src/osmscout/Location.cpp\
 	libosmscout/libosmscout/src/osmscout/Database.cpp\
+	libosmscout/libosmscout/src/osmscout/MapService.cpp\
 	libosmscout/libosmscout/src/osmscout/AreaWayIndex.cpp\
 	libosmscout/libosmscout/src/osmscout/GroundTile.cpp\
 	libosmscout/libosmscout/src/osmscout/TypeConfigLoader.cpp\
-	libosmscout/libosmscout/src/osmscout/CityStreetIndex.cpp\
+	libosmscout/libosmscout/src/osmscout/LocationIndex.cpp\
 	libosmscout/libosmscout/src/osmscout/Node.cpp\
 	libosmscout/libosmscout/src/osmscout/OptimizeAreasLowZoom.cpp\
 	libosmscout/libosmscout/src/osmscout/AreaNodeIndex.cpp\

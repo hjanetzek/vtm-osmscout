@@ -34,8 +34,9 @@
 		<include name="libosmscout/libosmscout/src/osmscout/AreaNodeIndex.cpp"/>
 		<include name="libosmscout/libosmscout/src/osmscout/AreaWayIndex.cpp"/>
 		<include name="libosmscout/libosmscout/src/osmscout/AttributeAccess.cpp"/>
-		<include name="libosmscout/libosmscout/src/osmscout/CityStreetIndex.cpp"/>
+		<include name="libosmscout/libosmscout/src/osmscout/LocationIndex.cpp"/>
 		<include name="libosmscout/libosmscout/src/osmscout/Database.cpp"/>
+        <include name="libosmscout/libosmscout/src/osmscout/MapService.cpp"/>
 		<include name="libosmscout/libosmscout/src/osmscout/GroundTile.cpp"/>
 		<include name="libosmscout/libosmscout/src/osmscout/Location.cpp"/>
 		<include name="libosmscout/libosmscout/src/osmscout/Node.cpp"/>

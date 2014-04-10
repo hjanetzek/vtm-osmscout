@@ -4,8 +4,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/vtm"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/vtm-gdx"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/vtm-gdx-desktop"/>
-	<classpathentry kind="lib" path="/vtm-libs/libs/slf4j-api-1.7.5.jar"/>
-	<classpathentry kind="lib" path="/vtm-libs/libs/slf4j-simple-1.7.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

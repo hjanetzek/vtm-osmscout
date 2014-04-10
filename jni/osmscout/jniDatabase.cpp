@@ -20,19 +20,16 @@
 #include <jni.h>
 #include <string.h>
 
-#include <osmscout/AdminRegion.h>
 #include <osmscout/Database.h>
+#include <osmscout/MapService.h>
 #include <osmscout/Node.h>
 #include <osmscout/MapPainter.h>
 
 #include <jniObjectArray.h>
 #include <jniObjectTypeSets.h>
 
-#ifdef __ANDROID__
-#include <android/log.h>
 #define DEBUG_TAG "OsmScoutJni:Database"
-#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
-#endif
+#include <log.h>
 
 using namespace osmscout;
 
@@ -50,7 +47,7 @@ extern "C" {
       DatabaseParameter databaseParameter;
 
       Database *nativeDatabase = new Database(databaseParameter);
-
+      nativeDatabase->AddReference();
       return gDatabaseArray->Add(nativeDatabase);
    }
 
@@ -77,6 +74,9 @@ extern "C" {
       jboolean isCopy;
 
       const char *nativePath = env->GetStringUTFChars(javaPath, &isCopy);
+      //char *path = strdup(nativePath);
+
+      printf("jniOpen(): path %s %d", nativePath, isCopy);
 
       bool result = nativeDatabase->Open(nativePath);
 
@@ -120,7 +120,7 @@ extern "C" {
 
       return geoBox;
    }
-
+   /*
    jobjectArray
    Java_osm_scout_Database_jniGetMatchingAdminRegions(JNIEnv *env, jobject object,
 	 int databaseIndex, jstring javaName, int limit, jobject javaLimitReached,
@@ -178,6 +178,7 @@ extern "C" {
 
       return javaRegions;
    }
+   */
 
    /*
     jobject Java_osm_scout_Database_jniGetNode(JNIEnv *env, jobject object,
@@ -232,9 +233,11 @@ extern "C" {
 
       MapData *nativeMapData = new MapData();
 
-      jobject javaMapData;
+      //MapService *mapService = new MapService(nativeDatabase);
+      MapService mapService = MapService(nativeDatabase);
 
-      if (!nativeDatabase->GetObjects(nativeObjectTypeSets->nodeTypes,
+      jobject javaMapData;
+      if (!mapService.GetObjects(nativeObjectTypeSets->nodeTypes,
 	    nativeObjectTypeSets->wayTypes, nativeObjectTypeSets->areaTypes, lonMin, latMin, lonMax,
 	    latMax, magnification, searchParameter, nativeMapData->nodes, nativeMapData->ways,
 	    nativeMapData->areas)) {
@@ -279,7 +282,9 @@ extern "C" {
 	 return JNI_FALSE;
       }
 
-      return nativeDatabase->GetGroundTiles(lonMin, latMin, lonMax, latMax, magnification,
+      MapService mapService = MapService(nativeDatabase);
+
+      return mapService.GetGroundTiles(lonMin, latMin, lonMax, latMax, magnification,
 	    nativeMapData->groundTiles);
    }
 

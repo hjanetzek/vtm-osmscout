@@ -15,8 +15,8 @@
 
 package org.oscim.osmscout;
 
-import org.oscim.tiling.source.ITileDataSource;
-import org.oscim.tiling.source.TileSource;
+import org.oscim.tiling.ITileDataSource;
+import org.oscim.tiling.TileSource;
 
 import osm.scout.Database;
 import osm.scout.MapParameter;

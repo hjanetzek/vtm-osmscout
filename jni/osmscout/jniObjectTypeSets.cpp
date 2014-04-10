@@ -19,12 +19,12 @@
 
 #include <jni.h>
 #include <string.h>
-//#include <android/log.h>
 
 #include <jniObjectArray.h>
 #include <jniObjectTypeSets.h>
 
 #define DEBUG_TAG "OsmScoutJni:ObjectTypeSets"
+#include <log.h>
 
 using namespace osmscout;
 

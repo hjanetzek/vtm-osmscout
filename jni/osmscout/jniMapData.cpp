@@ -19,7 +19,6 @@
 
 #include <jni.h>
 #include <string.h>
-//#include <android/log.h>
 
 #include <osmscout/MapPainter.h>
 

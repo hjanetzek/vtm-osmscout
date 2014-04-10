@@ -1,6 +1,7 @@
 /*
  This source is part of the libosmscout library
  Copyright (C) 2010  Tim Teulings
+ Copyright (C) 2014  Hannes Janetzek
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -21,7 +22,6 @@
 #include <string.h>
 #include <math.h>
 
-#include <osmscout/AdminRegion.h>
 #include <osmscout/Database.h>
 #include <osmscout/Node.h>
 #include <osmscout/MapPainter.h>
@@ -29,11 +29,13 @@
 #include <jniTileSource.h>
 #include <jniObjectArray.h>
 
-#ifdef __ANDROID__
-#include <android/log.h>
 #define DEBUG_TAG "OsmScoutJni:TileSource"
-#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
-#endif
+#include <log.h>
+
+//#ifdef __ANDROID__
+//#include <android/log.h>
+//#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, __VA_ARGS__)
+//#endif
 
 using namespace osmscout;
 

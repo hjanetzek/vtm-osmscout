@@ -19,10 +19,13 @@ import org.oscim.core.MapElement;
 import org.oscim.core.MercatorProjection;
 import org.oscim.core.Tag;
 import org.oscim.core.Tile;
-import org.oscim.tiling.MapTile;
-import org.oscim.tiling.source.ITileDataSink;
-import org.oscim.tiling.source.ITileDataSource;
-import org.oscim.utils.TileClipper;
+import org.oscim.layers.tile.MapTile;
+import org.oscim.tiling.ITileDataSink;
+import org.oscim.tiling.ITileDataSink.QueryResult;
+import org.oscim.tiling.ITileDataSource;
+import org.oscim.utils.geom.TileClipper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import osm.scout.Database;
 import osm.scout.MapData;
@@ -30,6 +33,7 @@ import osm.scout.ObjectTypeSets;
 import osm.scout.StyleConfig;
 
 public class TileDataSource implements ITileDataSource {
+	private final static Logger log = LoggerFactory.getLogger(TileDataSource.class);
 
 	private final int mJniRef;
 
@@ -38,17 +42,16 @@ public class TileDataSource implements ITileDataSource {
 
 	private osm.scout.MercatorProjection mProjection;
 	// private MapPainterCanvas mMapPainterCanvas;
-	private MapData mMapData;
 
 	private final MapElement mMapElement;
 
-	double mScale;
-	double mOffsetX;
-	double mOffsetY;
+	// double mScale;
+	// double mOffsetX;
+	// double mOffsetY;
 
 	TileClipper mTileClipper = new TileClipper(-16, -16, Tile.SIZE + 16, Tile.SIZE + 16);
 
-	OsmScoutTileSource mTileSource;
+	final OsmScoutTileSource mTileSource;
 
 	public TileDataSource(OsmScoutTileSource tileSource, Database database, StyleConfig styleConfig) {
 
@@ -73,41 +76,53 @@ public class TileDataSource implements ITileDataSource {
 	ITileDataSink mSink;
 
 	@Override
-	public QueryResult executeQuery(MapTile tile, ITileDataSink mapDataSink) {
+	public void query(MapTile tile, ITileDataSink mapDataSink) {
+		if (mTileSource == null) {
+			mapDataSink.completed(QueryResult.FAILED);
+			return;
+		}
 		boolean success = false;
 		synchronized (mTileSource) {
+			double scale = (1 << tile.zoomLevel);
+			double w = 1.0 / scale;
+			// mScale = (1 << tile.zoomLevel) * (Tile.SIZE) + 1;
+			// mOffsetX = tile.x * mScale;
+			// mOffsetY = tile.y * mScale;
 
-			double w = 1.0 / (1 << tile.zoomLevel);
-			mScale = (1 << tile.zoomLevel) * Tile.SIZE;
-			mOffsetX = tile.x * mScale;
-			mOffsetY = tile.y * mScale;
+			// double minLon = MercatorProjection.toLongitude(tile.x);
+			// double maxLon = MercatorProjection.toLongitude(tile.x + w);
+			// double minLat = MercatorProjection.toLatitude(tile.y + w);
+			// double maxLat = MercatorProjection.toLatitude(tile.y);
 
-			double minLon = MercatorProjection.toLongitude(tile.x);
-			double maxLon = MercatorProjection.toLongitude(tile.x + w);
-			double minLat = MercatorProjection.toLatitude(tile.y + w);
-			double maxLat = MercatorProjection.toLatitude(tile.y);
+			double lon = MercatorProjection.toLongitude(tile.x + w / 2);
+			double lat = MercatorProjection.toLatitude(tile.y + w / 2);
 
-			mProjection.set(minLon, minLat, maxLon, maxLat, (1 << tile.zoomLevel), Tile.SIZE);
+			// mProjection.set(minLon, minLat, maxLon, maxLat, scale, Tile.SIZE
+			// + 1);
+
+			mProjection.set(lon, lat, scale, Tile.SIZE, Tile.SIZE);
 
 			ObjectTypeSets typeSets = mStyleConfig.getObjectTypesWithMaxMag(
-			        mProjection.getMagnification() / 2);
+			    mProjection.getMagnification() / 2);
 
-			mMapData = mDatabase.getObjects(typeSets, mProjection);
-
-			// log.debug("ways " + mMapData.numWays());
+			MapData mapData = mDatabase.getObjects(typeSets, mProjection);
+			if (mapData == null) {
+				mapDataSink.completed(QueryResult.FAILED);
+				log.debug("no data");
+				return;
+			}
 
 			mSink = mapDataSink;
 
 			success = jniDrawMap(mJniRef, mStyleConfig.getJniObjectIndex(),
 			                     mProjection.getJniObjectIndex(),
 			                     mTileSource.mMapParameter.getJniObjectIndex(),
-			                     mMapData.getJniObjectIndex());
+			                     mapData.getJniObjectIndex());
 		}
 
-		if (!success)
-			return QueryResult.FAILED;
-
-		return QueryResult.SUCCESS;
+		mSink.completed(success ? QueryResult.SUCCESS : QueryResult.FAILED);
+		// mTileSource.close();
+		// mTileSource = null;
 	}
 
 	@Override
@@ -174,8 +189,9 @@ public class TileDataSource implements ITileDataSource {
 	private native void jniDestructor(int tileSourceIndex);
 
 	private native boolean jniDrawMap(int tileSourceIndex,
-	                                  int styleConfigIndex,
-	                                  int projectionIndex,
-	                                  int mapParameter,
-	                                  int mapDataIndex);
+	        int styleConfigIndex,
+	        int projectionIndex,
+	        int mapParameter,
+	        int mapDataIndex);
+
 }

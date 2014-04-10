@@ -7,10 +7,12 @@ import org.oscim.renderer.MapRenderer;
 import org.oscim.theme.VtmThemes;
 import org.oscim.tiling.TileSource;
 
+import com.badlogic.gdx.utils.SharedLibraryLoader;
+
 public class MapTest extends GdxMap {
 	static {
-		// new SharedLibraryLoader().load("osmscout");
-		System.loadLibrary("osmscout64");
+		new SharedLibraryLoader().load("osmscout");
+		//System.loadLibrary("osmscout64");
 	}
 
 	@Override
